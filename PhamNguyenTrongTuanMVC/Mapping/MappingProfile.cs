@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using PhamNguyenTrongTuanMVC.Models;
+using RepositoryLayer.Entities;
+using ServiceLayer.Models;
 
 namespace PhamNguyenTrongTuanMVC.Mapping
 {
@@ -6,7 +9,15 @@ namespace PhamNguyenTrongTuanMVC.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<RepositoryLayer.Entities.SystemAccount, ServiceLayer.Models.AccountDTO>();
+            CreateMap<SystemAccount, AccountDTO>().ReverseMap();
+            CreateMap<NewsArticleDTO, NewsArticle>().ReverseMap();
+            CreateMap<CategoryDTO, CategoryViewModel>()
+                .ForMember(
+                    dest => dest.NewsArticleCount,
+                    opt => opt.MapFrom(src => src.NewsArticles.Count)
+                );
+
+            CreateMap<CategoryDTO, Category>().ReverseMap();
         }
     }
 }

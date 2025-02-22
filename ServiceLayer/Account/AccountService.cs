@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using RepositoryLayer.Account;
+using RepositoryLayer.Accounts;
+using RepositoryLayer.Entities;
 using ServiceLayer.Models;
 
 namespace ServiceLayer.Account;
@@ -17,8 +18,53 @@ public class AccountService : IAccountService
 
     public async Task<AccountDTO?> LoginAsync(string email, string password)
     {
-        var systemAccount = await _accountRepository.Login(email, password);
+        var systemAccount = await _accountRepository.GetAccountByEmailAsync(email);
+        if (systemAccount == null)
+        {
+            return null;
+        }
+        if (systemAccount.AccountPassword != password)
+        {
+            return null;
+        }
         var accountDto = _mapper.Map<AccountDTO>(systemAccount);
         return accountDto;
+    }
+
+    public async Task<AccountDTO?> GetAcountByEmailAsync(string email)
+    {
+        var systemAccount = await _accountRepository.GetAccountByEmailAsync(email);
+        var accountDto = _mapper.Map<AccountDTO>(systemAccount);
+        return accountDto;
+    }
+
+    public async Task<AccountDTO?> GetAcountByIdAsync(int accountId)
+    {
+        var systemAccount = await _accountRepository.GetAccountByIdAsync(accountId);
+        var accountDto = _mapper.Map<AccountDTO>(systemAccount);
+        return accountDto;
+    }
+
+    public async Task<AccountDTO> CreateNewAccountAsync(AccountDTO accountDto)
+    {
+        var systemAccount = _mapper.Map<SystemAccount>(accountDto);
+        var addedAccount = await _accountRepository.CreateAccountAsync(systemAccount);
+        var accountDtoToReturn = _mapper.Map<AccountDTO>(addedAccount);
+        return accountDtoToReturn;
+    }
+
+    public async Task<AccountDTO> UpdateAccountAsync(AccountDTO accountDto)
+    {
+        var systemAccount = _mapper.Map<SystemAccount>(accountDto);
+        var updatedAccount = await _accountRepository.UpdateAccountAsync(systemAccount);
+        var accountDtoToReturn = _mapper.Map<AccountDTO>(updatedAccount);
+        return accountDtoToReturn;
+    }
+
+    public async Task<int?> DeleteAccountAsync(AccountDTO accountDTO)
+    {
+        var systemAccount = _mapper.Map<SystemAccount>(accountDTO);
+        var effectedRow = await _accountRepository.DeleteAccountAsync(systemAccount);
+        return effectedRow;
     }
 }

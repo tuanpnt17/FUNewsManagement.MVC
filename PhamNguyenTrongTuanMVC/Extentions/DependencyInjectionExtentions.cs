@@ -1,7 +1,11 @@
 ﻿using PhamNguyenTrongTuanMVC.Mapping;
 using PhamNguyenTrongTuanMVC.Models.Account;
-using RepositoryLayer.Account;
+using RepositoryLayer.Accounts;
+using RepositoryLayer.Categories;
+using RepositoryLayer.NewsArticles;
 using ServiceLayer.Account;
+using ServiceLayer.Category;
+using ServiceLayer.NewsArticle;
 
 namespace PhamNguyenTrongTuanMVC.Extentions
 {
@@ -22,6 +26,10 @@ namespace PhamNguyenTrongTuanMVC.Extentions
             services.Configure<AdminOptions>(config.GetSection(AdminOptions.Admin));
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<INewsArticleService, NewsArticleService>();
+            services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryService, CategoryService>();
             return services;
         }
     }

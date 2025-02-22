@@ -13,7 +13,7 @@ namespace RepositoryLayer.Data
         public DbSet<SystemAccount> SystemAccounts { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public DbSet<NewsArticle> NewsArticles { get; set; }
+        public DbSet<Entities.NewsArticle> NewsArticles { get; set; }
         public DbSet<NewsTag> NewsTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

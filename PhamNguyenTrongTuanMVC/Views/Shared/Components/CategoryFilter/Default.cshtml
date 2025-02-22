@@ -1,0 +1,15 @@
+﻿@model List<CategoryViewModel>
+@{
+    var allCount = 0;
+}
+
+<div class="blog__sidebar__item">
+    <h4>Categories</h4>
+    <ul>
+        <li><a href="#">All</a></li>
+        @foreach (var item in Model)
+        {
+            <li><a href="#">@item.CategoryName (@item.NewsArticleCount)</a></li>
+        }     
+    </ul>
+</div>

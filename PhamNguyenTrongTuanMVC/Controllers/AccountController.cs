@@ -63,8 +63,12 @@ namespace PhamNguyenTrongTuanMVC.Controllers
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     principal
                 );
+                if (accountDto.AccountRole == AccountRole.Staff)
+                {
+                    return RedirectToAction("Chart", "Dashboard");
+                }
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "NewsArticle");
             }
 
             if (_adminOption.Password != loginAccountViewModel.Password)
@@ -88,7 +92,7 @@ namespace PhamNguyenTrongTuanMVC.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 adminPrincipal
             );
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Chart", "Dashboard");
         }
 
         [Authorize]
@@ -96,6 +100,12 @@ namespace PhamNguyenTrongTuanMVC.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            return View();
         }
     }
 }
