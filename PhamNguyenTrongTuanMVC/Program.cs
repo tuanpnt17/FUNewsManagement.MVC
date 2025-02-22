@@ -1,15 +1,23 @@
-using Microsoft.EntityFrameworkCore;
-using RepositoryLayer.Data;
-using RepositoryLayer.SeedData;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using PhamNguyenTrongTuanMVC.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<FUNewsDBContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("FUNewsConnection"));
-});
+builder.Services.AddDatabaseConfiguration(builder.Configuration);
+builder.Services.AddDependencyInjectionConfiguration(builder.Configuration);
+
+builder
+    .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(
+        CookieAuthenticationDefaults.AuthenticationScheme,
+        opts =>
+        {
+            opts.LoginPath = "/Account/Login";
+            opts.LogoutPath = "/Account/Logout";
+            opts.AccessDeniedPath = "/Account/Login";
+        }
+    );
 
 var app = builder.Build();
 
@@ -30,21 +38,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
-#region =================== Seed Data ===================
-using var scope = app.Services.CreateScope();
-var serviceProvider = scope.ServiceProvider;
-var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-try
-{
-    var context = serviceProvider.GetRequiredService<FUNewsDBContext>();
-    await context.Database.MigrateAsync();
-    await FUNewsContextSeed.SeedAsync(context, loggerFactory); //seed data from json
-}
-catch (Exception ex)
-{
-    var logger = loggerFactory.CreateLogger<Program>();
-    logger.LogError(ex, "An error occurred during migration");
-}
-#endregion
+await app.SeedNewData();
 
 app.Run();

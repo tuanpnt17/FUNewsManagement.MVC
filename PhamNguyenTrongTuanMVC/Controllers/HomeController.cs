@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PhamNguyenTrongTuanMVC.Models;
 using RepositoryLayer.Data;
@@ -16,10 +17,12 @@ namespace PhamNguyenTrongTuanMVC.Controllers
             _context = context;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
-            var articles = _context.NewsArticles.ToList();
-            return View(articles.Count());
+            var user = HttpContext.User;
+            var name = user.Identity?.Name;
+            return View("Index", name);
         }
 
         public IActionResult Privacy()
