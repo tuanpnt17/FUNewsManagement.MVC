@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PhamNguyenTrongTuanMVC.Models;
+using PhamNguyenTrongTuanMVC.Models.Account;
 using RepositoryLayer.Entities;
 using ServiceLayer.Models;
 
@@ -18,6 +19,9 @@ namespace PhamNguyenTrongTuanMVC.Mapping
                 );
 
             CreateMap<CategoryDTO, Category>().ReverseMap();
+            CreateMap<AccountDTO, ViewAccountViewModel>().ReverseMap();
+            CreateMap<AccountDTO, AddNewAccountViewModel>().ReverseMap();
+            CreateMap<AccountDTO, UpdateAccountViewModel>().ReverseMap();
         }
     }
 }

@@ -54,7 +54,7 @@ namespace RepositoryLayer.NewsArticles
             return effectedRow;
         }
 
-        public async Task<int?> DeleteAccountAsync(NewsArticle deletedAccount)
+        public async Task<int?> DeleteAccountAsync(NewsArticle? deletedAccount)
         {
             var systemAccount = await GetArticleByIdAsync(deletedAccount.NewsArticleId);
             if (systemAccount == null)

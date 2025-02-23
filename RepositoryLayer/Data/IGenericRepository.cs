@@ -8,6 +8,6 @@
 
         Task<int?> UpdateAccountAsync(T t);
 
-        Task<int?> DeleteAccountAsync(T t);
+        Task<int?> DeleteAccountAsync(T? t);
     }
 }

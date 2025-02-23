@@ -28,9 +28,10 @@ namespace RepositoryLayer.Accounts
             return await _context.SystemAccounts.ToListAsync();
         }
 
-        public async Task<SystemAccount> CreateAccountAsync(SystemAccount newsArticle)
+        public async Task<SystemAccount> CreateAccountAsync(SystemAccount account)
         {
-            var addedAccount = await _context.SystemAccounts.AddAsync(newsArticle);
+            account.AccountPassword = "@1";
+            var addedAccount = await _context.SystemAccounts.AddAsync(account);
             await _context.SaveChangesAsync();
             return addedAccount.Entity;
         }
@@ -42,13 +43,42 @@ namespace RepositoryLayer.Accounts
             {
                 return null;
             }
-            await Task.Run(() => _context.SystemAccounts.Update(systemAccount));
+
+            // Update fields that are different
+            if (
+                systemAccount.AccountName != account.AccountName
+                && !string.IsNullOrEmpty(account.AccountName)
+            )
+            {
+                systemAccount.AccountName = account.AccountName;
+            }
+            if (
+                systemAccount.AccountEmail != account.AccountEmail
+                && !string.IsNullOrEmpty(account.AccountEmail)
+            )
+            {
+                systemAccount.AccountEmail = account.AccountEmail;
+            }
+            if (systemAccount.AccountRole != account.AccountRole)
+            {
+                systemAccount.AccountRole = account.AccountRole;
+            }
+            if (
+                systemAccount.AccountPassword != account.AccountPassword
+                && !string.IsNullOrEmpty(account.AccountPassword)
+            )
+            {
+                systemAccount.AccountPassword = account.AccountPassword;
+            }
+
             var effectedRow = await _context.SaveChangesAsync();
             return effectedRow;
         }
 
-        public async Task<int?> DeleteAccountAsync(SystemAccount account)
+        public async Task<int?> DeleteAccountAsync(SystemAccount? account)
         {
+            if (account == null)
+                return null;
             var systemAccount = await GetAccountByIdAsync(account.AccountId);
             if (systemAccount == null)
             {

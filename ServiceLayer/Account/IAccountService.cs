@@ -11,6 +11,8 @@ public interface IAccountService
     Task<AccountDTO?> GetAcountByIdAsync(int accountId);
 
     Task<AccountDTO> CreateNewAccountAsync(AccountDTO accountDto);
-    Task<AccountDTO> UpdateAccountAsync(AccountDTO accountDto);
-    Task<int?> DeleteAccountAsync(AccountDTO accountDTO);
+    Task<int?> UpdateAccountAsync(AccountDTO accountDto);
+    Task<int?> DeleteAccountAsync(int accountId);
+
+    Task<IEnumerable<AccountDTO>> ListAllAccounts();
 }

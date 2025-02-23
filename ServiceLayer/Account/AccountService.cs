@@ -53,18 +53,24 @@ public class AccountService : IAccountService
         return accountDtoToReturn;
     }
 
-    public async Task<AccountDTO> UpdateAccountAsync(AccountDTO accountDto)
+    public async Task<int?> UpdateAccountAsync(AccountDTO accountDto)
     {
         var systemAccount = _mapper.Map<SystemAccount>(accountDto);
-        var updatedAccount = await _accountRepository.UpdateAccountAsync(systemAccount);
-        var accountDtoToReturn = _mapper.Map<AccountDTO>(updatedAccount);
-        return accountDtoToReturn;
+        var effectedRow = await _accountRepository.UpdateAccountAsync(systemAccount);
+        return effectedRow;
     }
 
-    public async Task<int?> DeleteAccountAsync(AccountDTO accountDTO)
+    public async Task<int?> DeleteAccountAsync(int accountId)
     {
-        var systemAccount = _mapper.Map<SystemAccount>(accountDTO);
+        var systemAccount = await _accountRepository.GetAccountByIdAsync(accountId);
         var effectedRow = await _accountRepository.DeleteAccountAsync(systemAccount);
         return effectedRow;
+    }
+
+    public async Task<IEnumerable<AccountDTO>> ListAllAccounts()
+    {
+        var accounts = await _accountRepository.ListAllAsync();
+        var accountDtos = _mapper.Map<IEnumerable<AccountDTO>>(accounts);
+        return accountDtos;
     }
 }

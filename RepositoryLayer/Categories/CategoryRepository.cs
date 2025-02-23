@@ -32,7 +32,7 @@ namespace RepositoryLayer.Categories
             throw new NotImplementedException();
         }
 
-        public Task<int?> DeleteAccountAsync(Category t)
+        public Task<int?> DeleteAccountAsync(Category? t)
         {
             throw new NotImplementedException();
         }
