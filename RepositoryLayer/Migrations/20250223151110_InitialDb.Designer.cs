@@ -2,18 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RepositoryLayer.Data;
 
 #nullable disable
 
-namespace FUNewsManagementSystem.RepositoryLayer.Migrations
+namespace RepositoryLayer.Migrations
 {
     [DbContext(typeof(FUNewsDBContext))]
-    [Migration("20250216092415_UpdateNewArticleTitleName")]
-    partial class UpdateNewArticleTitleName
+    [Migration("20250223151110_InitialDb")]
+    partial class InitialDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,34 +21,34 @@ namespace FUNewsManagementSystem.RepositoryLayer.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.13")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.Category", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.Category", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CategoryId"));
 
                     b.Property<string>("CategoryDescription")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("character varying(250)");
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("CategoryStatus")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("IsActive");
 
                     b.Property<int?>("ParentCategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("CategoryId");
 
@@ -57,46 +57,46 @@ namespace FUNewsManagementSystem.RepositoryLayer.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.NewsArticle", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.NewsArticle", b =>
                 {
                     b.Property<string>("NewsArticleId")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("CreatedById")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Headline")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NewsContent")
                         .HasColumnType("text");
 
                     b.Property<string>("NewsSource")
                         .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
+                        .HasColumnType("character varying(400)");
 
                     b.Property<bool>("NewsStatus")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("NewsTitle")
                         .IsRequired()
                         .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
+                        .HasColumnType("character varying(400)");
 
                     b.Property<int>("UpdatedById")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("NewsArticleId");
 
@@ -109,15 +109,15 @@ namespace FUNewsManagementSystem.RepositoryLayer.Migrations
                     b.ToTable("NewsArticles");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.NewsTag", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.NewsTag", b =>
                 {
                     b.Property<string>("NewsArticleId")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("character varying(20)")
                         .HasColumnOrder(0);
 
                     b.Property<int>("TagId")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnOrder(1);
 
                     b.HasKey("NewsArticleId", "TagId");
@@ -127,28 +127,28 @@ namespace FUNewsManagementSystem.RepositoryLayer.Migrations
                     b.ToTable("NewsTags");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.SystemAccount", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.SystemAccount", b =>
                 {
                     b.Property<int>("AccountId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("AccountId"));
 
                     b.Property<string>("AccountEmail")
                         .IsRequired()
                         .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
+                        .HasColumnType("character varying(70)");
 
                     b.Property<string>("AccountName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("AccountPassword")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<int>("AccountRole")
                         .HasColumnType("int")
@@ -159,32 +159,32 @@ namespace FUNewsManagementSystem.RepositoryLayer.Migrations
                     b.ToTable("SystemAccounts");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.Tag", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.Tag", b =>
                 {
                     b.Property<int>("TagId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TagId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TagId"));
 
                     b.Property<string>("Note")
                         .IsRequired()
                         .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
+                        .HasColumnType("character varying(400)");
 
                     b.Property<string>("TagName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("TagId");
 
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.Category", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.Category", b =>
                 {
-                    b.HasOne("FUNewsManagementSystem.RepositoryLayer.Entities.Category", "ParentCategory")
+                    b.HasOne("RepositoryLayer.Entities.Category", "ParentCategory")
                         .WithMany("SubCategories")
                         .HasForeignKey("ParentCategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -192,21 +192,21 @@ namespace FUNewsManagementSystem.RepositoryLayer.Migrations
                     b.Navigation("ParentCategory");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.NewsArticle", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.NewsArticle", b =>
                 {
-                    b.HasOne("FUNewsManagementSystem.RepositoryLayer.Entities.Category", "Category")
+                    b.HasOne("RepositoryLayer.Entities.Category", "Category")
                         .WithMany("NewsArticles")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FUNewsManagementSystem.RepositoryLayer.Entities.SystemAccount", "CreatedBy")
+                    b.HasOne("RepositoryLayer.Entities.SystemAccount", "CreatedBy")
                         .WithMany("CreatedArticles")
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FUNewsManagementSystem.RepositoryLayer.Entities.SystemAccount", "UpdatedBy")
+                    b.HasOne("RepositoryLayer.Entities.SystemAccount", "UpdatedBy")
                         .WithMany("UpdatedArticles")
                         .HasForeignKey("UpdatedById")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -219,15 +219,15 @@ namespace FUNewsManagementSystem.RepositoryLayer.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.NewsTag", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.NewsTag", b =>
                 {
-                    b.HasOne("FUNewsManagementSystem.RepositoryLayer.Entities.NewsArticle", "NewsArticle")
+                    b.HasOne("RepositoryLayer.Entities.NewsArticle", "NewsArticle")
                         .WithMany("NewsTags")
                         .HasForeignKey("NewsArticleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FUNewsManagementSystem.RepositoryLayer.Entities.Tag", "Tag")
+                    b.HasOne("RepositoryLayer.Entities.Tag", "Tag")
                         .WithMany("NewsTags")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -238,26 +238,26 @@ namespace FUNewsManagementSystem.RepositoryLayer.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.Category", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.Category", b =>
                 {
                     b.Navigation("NewsArticles");
 
                     b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.NewsArticle", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.NewsArticle", b =>
                 {
                     b.Navigation("NewsTags");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.SystemAccount", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.SystemAccount", b =>
                 {
                     b.Navigation("CreatedArticles");
 
                     b.Navigation("UpdatedArticles");
                 });
 
-            modelBuilder.Entity("FUNewsManagementSystem.RepositoryLayer.Entities.Tag", b =>
+            modelBuilder.Entity("RepositoryLayer.Entities.Tag", b =>
                 {
                     b.Navigation("NewsTags");
                 });

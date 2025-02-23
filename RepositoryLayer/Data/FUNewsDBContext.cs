@@ -72,7 +72,7 @@ namespace RepositoryLayer.Data
                 .Entity<NewsArticle>()
                 .Property(na => na.NewsStatus)
                 .HasConversion(newsStatusConverter)
-                .HasColumnType("bit");
+                .HasColumnType("boolean");
 
             // Converter cho CategoryStatus: lưu dưới dạng bit trong DB
             var categoryStatusConverter = new ValueConverter<CategoryStatus, bool>(
@@ -86,7 +86,38 @@ namespace RepositoryLayer.Data
                 .Property(typeof(CategoryStatus), "CategoryStatus")
                 .HasConversion(categoryStatusConverter)
                 .HasColumnName("IsActive")
-                .HasColumnType("bit");
+                .HasColumnType("boolean");
+
+            var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+                v =>
+                    v.Kind == DateTimeKind.Unspecified
+                        ? DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                        : v.ToUniversalTime(),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+            );
+
+            modelBuilder
+                .Entity<NewsArticle>()
+                .Property(e => e.CreatedDate)
+                .HasConversion(dateTimeConverter);
+
+            // Tương tự cho ModifiedDate nếu cần:
+            var nullableDateTimeConverter = new ValueConverter<DateTime?, DateTime?>(
+                v =>
+                    v.HasValue
+                        ? (
+                            v.Value.Kind == DateTimeKind.Unspecified
+                                ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc)
+                                : v.Value.ToUniversalTime()
+                        )
+                        : v,
+                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v
+            );
+
+            modelBuilder
+                .Entity<NewsArticle>()
+                .Property(e => e.ModifiedDate)
+                .HasConversion(nullableDateTimeConverter);
         }
     }
 }

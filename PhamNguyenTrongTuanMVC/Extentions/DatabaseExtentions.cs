@@ -13,7 +13,7 @@ namespace PhamNguyenTrongTuanMVC.Extentions
         {
             service.AddDbContext<FUNewsDBContext>(options =>
             {
-                options.UseSqlServer(config.GetConnectionString("FUNewsConnection"));
+                options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
             });
             return service;
         }
