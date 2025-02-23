@@ -48,7 +48,7 @@ public class AccountService : IAccountService
     public async Task<AccountDTO> CreateNewAccountAsync(AccountDTO accountDto)
     {
         var systemAccount = _mapper.Map<SystemAccount>(accountDto);
-        var addedAccount = await _accountRepository.CreateAccountAsync(systemAccount);
+        var addedAccount = await _accountRepository.CreateAsync(systemAccount);
         var accountDtoToReturn = _mapper.Map<AccountDTO>(addedAccount);
         return accountDtoToReturn;
     }
@@ -56,14 +56,14 @@ public class AccountService : IAccountService
     public async Task<int?> UpdateAccountAsync(AccountDTO accountDto)
     {
         var systemAccount = _mapper.Map<SystemAccount>(accountDto);
-        var effectedRow = await _accountRepository.UpdateAccountAsync(systemAccount);
+        var effectedRow = await _accountRepository.UpdateAsync(systemAccount);
         return effectedRow;
     }
 
     public async Task<int?> DeleteAccountAsync(int accountId)
     {
         var systemAccount = await _accountRepository.GetAccountByIdAsync(accountId);
-        var effectedRow = await _accountRepository.DeleteAccountAsync(systemAccount);
+        var effectedRow = await _accountRepository.DeleteAsync(systemAccount);
         return effectedRow;
     }
 

@@ -22,24 +22,52 @@ namespace RepositoryLayer.Categories
             return categories;
         }
 
-        public Task<Category> CreateAccountAsync(Category t)
+        public async Task<Category> CreateAsync(Category category)
         {
-            throw new NotImplementedException();
+            var addedAccount = await _context.Categories.AddAsync(category);
+            await _context.SaveChangesAsync();
+            return addedAccount.Entity;
         }
 
-        public Task<int?> UpdateAccountAsync(Category t)
+        public async Task<int?> UpdateAsync(Category category)
         {
-            throw new NotImplementedException();
+            var updatedCategory = await GetCategoryByIdAsync(category.CategoryId);
+            if (updatedCategory == null)
+                return 0;
+
+            if (category.CategoryName != updatedCategory.CategoryName)
+                updatedCategory.CategoryName = category.CategoryName;
+
+            if (category.CategoryDescription != updatedCategory.CategoryDescription)
+                updatedCategory.CategoryDescription = category.CategoryDescription;
+
+            if (category.CategoryStatus != updatedCategory.CategoryStatus)
+                updatedCategory.CategoryStatus = category.CategoryStatus;
+
+            _context.Categories.Update(updatedCategory);
+            var effectedRow = await _context.SaveChangesAsync();
+            return effectedRow;
         }
 
-        public Task<int?> DeleteAccountAsync(Category? t)
+        public async Task<int?> DeleteAsync(Category? category)
         {
-            throw new NotImplementedException();
+            if (category == null)
+                return null;
+            var deletedCategory = await GetCategoryByIdAsync(category.CategoryId);
+            if (deletedCategory == null)
+            {
+                return null;
+            }
+            await Task.Run(() => _context.Categories.Remove(deletedCategory));
+            var effectedRow = await _context.SaveChangesAsync();
+            return effectedRow;
         }
 
-        public Task<Category?> GetCategoryByIdAsync(int id)
+        public async Task<Category?> GetCategoryByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context
+                .Categories.Include(c => c.NewsArticles)
+                .FirstOrDefaultAsync(c => c.CategoryId == id);
         }
     }
 }

@@ -49,10 +49,10 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
                     <a href="@Url.Action("Chart", "Dashboard")" class="logo">
-                        <img src="~/dashboard/assets/img/kaiadmin/logo_light.svg"
+                        @* <img src="~/dashboard/assets/img/kaiadmin/logo_light.svg"
                              alt="navbar brand"
                              class="navbar-brand"
-                             height="20" />
+                             height="20" /> *@
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
@@ -93,7 +93,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#base">
+                            <a asp-controller="Category" asp-action="List">
                                 <i class="fas fa-layer-group"></i>
                                 <p>Categories</p>
                             </a>

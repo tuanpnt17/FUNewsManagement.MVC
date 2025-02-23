@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using PhamNguyenTrongTuanMVC.Models;
+using PhamNguyenTrongTuanMVC.Models.Category;
 using ServiceLayer.Category;
 using ServiceLayer.NewsArticle;
 

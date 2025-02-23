@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model PhamNguyenTrongTuanMVC.Models.Category.UpdateCategoryViewModel
+
+<!-- Modal -->
+<div class="modal fade"
+     id="editCategoryModal"
+     tabindex="-1"
+     role="dialog"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold"> New</span>
+                    <span class="fw-light"> Category </span>
+                </h5>
+                <button type="button"
+                        class="close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="Edit" asp-controller="Category" method="post" id="updateCategoryForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <p class="small">
+                        Update account using this form, make sure you
+                        fill them all
+                    </p>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <input asp-for="CategoryId" hidden class="form-control" />
+                    <div class="form-group">
+                        <label asp-for="CategoryName"></label>
+                        <input asp-for="CategoryName" class="form-control" placeholder="Name" />
+                        <span asp-validation-for="CategoryName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CategoryDescription"></label>
+                        <textarea asp-for="CategoryDescription" class="form-control" placeholder="Category description" rows="4"></textarea>
+                        <span asp-validation-for="CategoryDescription" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CategoryStatus"></label>
+                        <select asp-for="CategoryStatus" class="form-control">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                        <span asp-validation-for="CategoryStatus" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="updateCategoryButton">
+                        Update
+                    </button>
+                    <button type="button"
+                            class="btn btn-danger"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->

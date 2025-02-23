@@ -28,7 +28,7 @@ namespace RepositoryLayer.Accounts
             return await _context.SystemAccounts.ToListAsync();
         }
 
-        public async Task<SystemAccount> CreateAccountAsync(SystemAccount account)
+        public async Task<SystemAccount> CreateAsync(SystemAccount account)
         {
             account.AccountPassword = "@1";
             var addedAccount = await _context.SystemAccounts.AddAsync(account);
@@ -36,7 +36,7 @@ namespace RepositoryLayer.Accounts
             return addedAccount.Entity;
         }
 
-        public async Task<int?> UpdateAccountAsync(SystemAccount account)
+        public async Task<int?> UpdateAsync(SystemAccount account)
         {
             var systemAccount = await GetAccountByIdAsync(account.AccountId);
             if (systemAccount == null)
@@ -75,7 +75,7 @@ namespace RepositoryLayer.Accounts
             return effectedRow;
         }
 
-        public async Task<int?> DeleteAccountAsync(SystemAccount? account)
+        public async Task<int?> DeleteAsync(SystemAccount? account)
         {
             if (account == null)
                 return null;

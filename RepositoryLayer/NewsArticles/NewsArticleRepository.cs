@@ -35,14 +35,14 @@ namespace RepositoryLayer.NewsArticles
             return newsArticles;
         }
 
-        public async Task<NewsArticle> CreateAccountAsync(NewsArticle newsArticle)
+        public async Task<NewsArticle> CreateAsync(NewsArticle newsArticle)
         {
             var addedAccount = await _context.NewsArticles.AddAsync(newsArticle);
             await _context.SaveChangesAsync();
             return newsArticle;
         }
 
-        public async Task<int?> UpdateAccountAsync(NewsArticle newsArticle)
+        public async Task<int?> UpdateAsync(NewsArticle newsArticle)
         {
             var systemAccount = await GetArticleByIdAsync(newsArticle.NewsArticleId);
             if (systemAccount == null)
@@ -54,7 +54,7 @@ namespace RepositoryLayer.NewsArticles
             return effectedRow;
         }
 
-        public async Task<int?> DeleteAccountAsync(NewsArticle? deletedAccount)
+        public async Task<int?> DeleteAsync(NewsArticle? deletedAccount)
         {
             var systemAccount = await GetArticleByIdAsync(deletedAccount.NewsArticleId);
             if (systemAccount == null)

@@ -4,10 +4,10 @@
     {
         Task<IEnumerable<T>> ListAllAsync();
 
-        Task<T> CreateAccountAsync(T t);
+        Task<T> CreateAsync(T t);
 
-        Task<int?> UpdateAccountAsync(T t);
+        Task<int?> UpdateAsync(T t);
 
-        Task<int?> DeleteAccountAsync(T? t);
+        Task<int?> DeleteAsync(T? t);
     }
 }

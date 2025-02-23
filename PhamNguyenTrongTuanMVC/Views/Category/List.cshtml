@@ -1,14 +1,17 @@
-﻿@model IEnumerable<PhamNguyenTrongTuanMVC.Models.Account.ViewAccountViewModel>
-@{
+﻿@{
     Layout = "_DashboardLayout";
-    ViewBag.Title = "Accounts Management";
+    ViewBag.Title = "Category Management";
 }
+@using RepositoryLayer.Enums
+@model IEnumerable<PhamNguyenTrongTuanMVC.Models.Category.CategoryViewModel>
+
+
 
 <div class="col-md-12">
     <div class="card">
         <div class="card-header">
             <div class="d-flex align-items-center">
-                <h4 class="card-title">Accounts Management</h4>
+                <h4 class="card-title">Category Management</h4>
                 <button class="btn btn-primary btn-round ms-auto" type="button" id="openCreateModal">
                     <i class="fa fa-plus"></i>
                     Create
@@ -22,40 +25,43 @@
                        class="display table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th>@Html.DisplayNameFor(n => n.AccountId)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountName)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountEmail)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountRole)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryId)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryName)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryDescription)</th>
+                            <th>@Html.DisplayNameFor(n => n.NewsArticleCount)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryStatus)</th>
                             <th style="width: 10%">Action</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
-                            <th>@Html.DisplayNameFor(n => n.AccountId)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountName)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountEmail)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountRole)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryId)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryName)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryDescription)</th>
+                            <th>@Html.DisplayNameFor(n => n.NewsArticleCount)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryStatus)</th>
                         </tr>
                     </tfoot>
                     <tbody>
-                        @foreach (var account in Model)
+                        @foreach (var cateogory in Model)
                         {
                             <tr>
-                                <td>@account.AccountId</td>
-                                <td>@account.AccountName</td>
-                                <td>@account.AccountEmail</td>
-                                <td>@account.AccountRole</td>
+                                <td>@cateogory.CategoryId</td>
+                                <td>@cateogory.CategoryName</td>
+                                <td>@cateogory.CategoryDescription</td>
+                                <td>@cateogory.NewsArticleCount</td>
+                                <td><span class="@(cateogory.CategoryStatus != CategoryStatus.Inactive ? "badge badge-success" : "badge badge-danger")">@cateogory.CategoryStatus</span></td>
                                 <td>
                                     <div class="form-button-action">
                                         <button type="button"
-                                                data-accountid="@account.AccountId"
-                                                class="btn btn-link btn-primary btn-lg updateAccountBtn"
+                                                data-categoryid="@cateogory.CategoryId"
+                                                class="btn btn-link btn-primary btn-lg updateCategoryBtn"
                                                 data-original-title="Edit Task">
                                             <i class="fa fa-edit"></i>
                                         </button>
                                         <button type="button"
-                                                data-accountid="@account.AccountId"
-                                                class="btn btn-link btn-danger alert_demo_8"
+                                                data-categoryid="@cateogory.CategoryId"
+                                                class="btn btn-link btn-danger deleteCategoryBtn"
                                                 data-original-title="Remove">
                                             <i class="fa fa-times"></i>
                                         </button>
@@ -74,11 +80,11 @@
 
 @section Scripts {
     <script>
-          $(document).on("click", ".alert_demo_8", function(event) {
+          $(document).on("click", ".deleteCategoryBtn", function(event) {
             event.preventDefault(); // Ngăn hành động mặc định
 
-            var accountId = $(this).data("accountid");
-            var url = "/Account/Delete/" + accountId;
+            var categoryId = $(this).data("categoryid");
+            var url = "/Category/Delete/" + categoryId;
             swal({
                 title: "Are you sure?",
                 text: "You won't be able to revert this!",
@@ -98,52 +104,51 @@
             }).then((willDelete) => {
                 if (willDelete) {
                     // Gọi action method Delete qua AJAX sử dụng $.post
-                    $.post(url, {   
+                    $.post(url, {
                     }, function(response) {
-                        console.log("+++++", response);
-                        swal("Deleted!", "Your account has been deleted.", "success")
+                        swal("Deleted!", "Your category has been deleted.", "success")
                             .then(() => {
                                 location.reload();
                             });
                     }, "html")
                     .fail(function(xhr, status, error) {
-                        swal("Error!", "There was an error deleting the account.", "error");
+                        swal("Error!", "There was an error deleting the category.", "error");
                     });
                 } else {
 
-                    swal("Cancelled", "Your account is safe!", "info");
+                    swal("Cancelled", "Your category is safe!", "info");
                 }
             });
         });
 
-        $(document).on("click", ".updateAccountBtn", function(event) {
+        $(document).on("click", ".updateCategoryBtn", function(event) {
             $("#modalContainer").html("");
-            var accountId = $(this).data("accountid");
-            var url = "/Account/Edit/" + accountId;
+            var categoryId = $(this).data("categoryid");
+            var url = "/Category/Edit/" + categoryId;
             $.get(url, function(data) {
                $("#modalContainer").html(data);
-               $("#editAccountModal").modal("show");
+               $("#editCategoryModal").modal("show");
             });
         });
 
-        $(document).on("click", "#updateAccountButton", function(event){
+        $(document).on("click", "#updateCategoryButton", function(event){
             event.preventDefault();
 
             // Xử lý submit form qua AJAX
-            var form = $("#updateAccountForm");
+            var form = $("#updateCategoryForm");
             var url = form.attr("action");
 
             $.post(url, form.serialize(), function(data) {
 
-                $("#editAccountModal").modal("hide");
+                $("#editCategoryModal").modal("hide");
                 var $container = $("<div>").html(data);
                 var $modal = $container.find(".modal");
 
                 if ($modal.length > 0) {
-                    $("#editAccountModal").replaceWith($modal);
+                    $("#editCategoryModal").replaceWith($modal);
                     $modal.modal("show");
                 } else {
-                    swal("Update Successfully!", "The account has been updated.", "success")
+                    swal("Update Successfully!", "The category has been updated.", "success")
                             .then(() => {
                                 location.reload();
                             });
@@ -151,23 +156,23 @@
             }, "html");
         });
 
-        $(document).on("click", "#addRowButton", function(event){
+        $(document).on("click", "#addCategoryButton", function(event){
             event.preventDefault();
 
             // Xử lý submit form qua AJAX
-            var form = $("#newAccountForm");
+            var form = $("#newCategoryForm");
             var url = form.attr("action");
 
             $.post(url, form.serialize(), function(data) {
 
-                $("#addRowModal").modal("hide");
+                $("#addCategoryModal").modal("hide");
                 var $container = $("<div>").html(data);
                 var $modal = $container.find(".modal");
 
                 if ($modal.length > 0) {
-                    $("#addRowModal").replaceWith($modal);
+                    $("#addCategoryModal").replaceWith($modal);
                     $modal.modal("show");
-                } else {swal("Create Successfully!", "New account has been created.", "success")
+                } else {swal("Create Successfully!", "New category has been created.", "success")
                             .then(() => {
                                 location.reload();
                             });
@@ -176,16 +181,13 @@
         });
         $(document).ready(function () {
 
-            var action =
-              '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
-
-
             $("#openCreateModal").click(function () {
-                $.get("/Account/Add", function (data) {
+                $.get("/Category/Add", function (data) {
                     $("#modalContainer").html(data);
-                    $("#addRowModal").modal("show");
+                    $("#addCategoryModal").modal("show");
                 });
             });
         });
     </script>
 }
+
