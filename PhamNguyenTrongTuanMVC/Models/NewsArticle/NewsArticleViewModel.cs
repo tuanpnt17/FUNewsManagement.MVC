@@ -1,4 +1,4 @@
-﻿namespace PhamNguyenTrongTuanMVC.Models
+﻿namespace PhamNguyenTrongTuanMVC.Models.NewsArticle
 {
     public class NewsArticleViewModel
     {

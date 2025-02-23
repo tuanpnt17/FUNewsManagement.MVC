@@ -24,6 +24,13 @@ namespace ServiceLayer.NewsArticle
             return articleDtos;
         }
 
+        public async Task<IEnumerable<NewsArticleDTO>> GetAllNewsArticleAsync()
+        {
+            var articles = await _articleRepository.ListAllAsync();
+            var articleDtos = _mapper.Map<IEnumerable<NewsArticleDTO>>(articles);
+            return articleDtos;
+        }
+
         public async Task<NewsArticleDTO?> GetNewsArticleByIdAsync(string articleId)
         {
             var article = await _articleRepository.GetArticleByIdAsync(articleId);
