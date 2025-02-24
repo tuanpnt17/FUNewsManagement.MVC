@@ -45,6 +45,8 @@ public class AccountController : Controller
             AddNewAccountViewModel addAccountViewModel
     )
     {
+        // Todo: Check if email is already existed
+
         if (!ModelState.IsValid)
         {
             return PartialView("_AddAccountModal", addAccountViewModel);
@@ -125,7 +127,7 @@ public class AccountController : Controller
 
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Sid, accountDto.AccountEmail),
+                new(ClaimTypes.Sid, accountDto.AccountId.ToString()),
                 new(ClaimTypes.Name, accountDto.AccountName),
                 new(ClaimTypes.Email, accountDto.AccountEmail),
                 new(ClaimTypes.Role, accountDto.AccountRole.ToString()),
@@ -140,7 +142,7 @@ public class AccountController : Controller
             );
             if (accountDto.AccountRole == AccountRole.Staff)
             {
-                return RedirectToAction("Chart", "Dashboard");
+                return RedirectToAction("List", "Category");
             }
 
             return RedirectToAction("Index", "NewsArticle");
@@ -155,7 +157,7 @@ public class AccountController : Controller
         var adminClaims = new List<Claim>
         {
             new(ClaimTypes.Sid, _adminOption.Email),
-            new(ClaimTypes.Name, "System Admin"),
+            new(ClaimTypes.Name, _adminOption.Name),
             new(ClaimTypes.Email, _adminOption.Email),
             new(ClaimTypes.Role, AccountRole.Admin.ToString()),
         };

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PhamNguyenTrongTuanMVC.Models.Category;
 using ServiceLayer.Category;
@@ -6,6 +7,7 @@ using ServiceLayer.Models;
 
 namespace PhamNguyenTrongTuanMVC.Controllers
 {
+    [Authorize(Roles = "Staff")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;

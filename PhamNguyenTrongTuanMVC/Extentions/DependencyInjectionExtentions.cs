@@ -3,9 +3,11 @@ using PhamNguyenTrongTuanMVC.Models.Account;
 using RepositoryLayer.Accounts;
 using RepositoryLayer.Categories;
 using RepositoryLayer.NewsArticles;
+using RepositoryLayer.Tags;
 using ServiceLayer.Account;
 using ServiceLayer.Category;
 using ServiceLayer.NewsArticle;
+using ServiceLayer.Tag;
 
 namespace PhamNguyenTrongTuanMVC.Extentions
 {
@@ -30,6 +32,8 @@ namespace PhamNguyenTrongTuanMVC.Extentions
             services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ITagService, TagService>();
+            services.AddScoped<ITagRepository, TagRepository>();
             return services;
         }
     }

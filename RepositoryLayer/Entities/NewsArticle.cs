@@ -43,6 +43,6 @@ namespace RepositoryLayer.Entities
         public virtual SystemAccount? UpdatedBy { get; set; }
 
         // Relationship to Tags via the join entity
-        public virtual ICollection<NewsTag>? NewsTags { get; set; }
+        public virtual ICollection<NewsTag> NewsTags { get; set; } = [];
     }
 }

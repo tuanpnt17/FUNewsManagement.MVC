@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ServiceLayer.Models.NewsArticleDTO>
+﻿@using PhamNguyenTrongTuanMVC.Helpers
+@model IEnumerable<ServiceLayer.Models.NewsArticleDTO>
 @{
     Layout = "_CommonLayout";
     ViewData["Title"] = "News Article";
@@ -38,7 +39,7 @@
                                 </div>
                                 <div class="blog__item__text">
                                     <ul>
-                                        <li><i class="fa fa-calendar-o"></i> @item.CreatedDate</li>
+                                        <li><i class="fa fa-calendar-o"></i> @FormatHelper.FormatActualTime(item.CreatedDate)</li>
                                     </ul>
                                     <h5><a href="@Url.Action("ArticleDetail", "NewsArticle", new {articleId = item.NewsArticleId})">@item.NewsTitle</a></h5>
                                     <p>

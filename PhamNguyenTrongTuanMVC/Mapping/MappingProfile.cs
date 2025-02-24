@@ -11,14 +11,14 @@ namespace PhamNguyenTrongTuanMVC.Mapping
     {
         public MappingProfile()
         {
-            //System Account
-            CreateMap<SystemAccount, AccountDTO>()
-                .ReverseMap();
+            #region =========== System Account Mapping ===========
+            CreateMap<SystemAccount, AccountDTO>().ReverseMap();
             CreateMap<AccountDTO, ViewAccountViewModel>().ReverseMap();
             CreateMap<AccountDTO, AddNewAccountViewModel>().ReverseMap();
             CreateMap<AccountDTO, UpdateAccountViewModel>().ReverseMap();
+            #endregion
 
-            //Category
+            #region =========== Category Mapping ===========
             CreateMap<CategoryDTO, CategoryViewModel>()
                 .ForMember(
                     dest => dest.NewsArticleCount,
@@ -28,9 +28,19 @@ namespace PhamNguyenTrongTuanMVC.Mapping
             CreateMap<CategoryDTO, AddNewCategoryViewModel>().ReverseMap();
             CreateMap<CategoryDTO, UpdateCategoryViewModel>().ReverseMap();
 
-            //News Article
-            CreateMap<NewsArticleDTO, NewsArticle>()
-                .ReverseMap();
+            #endregion
+
+            #region =========== News Article Mapping ===========
+            CreateMap<NewsArticleDTO, NewsArticle>();
+            CreateMap<NewsArticle, NewsArticleDTO>()
+                .ForMember(
+                    n => n.TagIds,
+                    opt =>
+                        opt.MapFrom(src =>
+                            src.NewsTags.Where(x => x.NewsArticleId == src.NewsArticleId)
+                                .Select(x => x.TagId)
+                        )
+                );
             CreateMap<NewsArticleDTO, NewsArticleViewModel>().ReverseMap();
             CreateMap<NewsArticleDTO, ViewNewsArticleViewModel>()
                 .ForMember(
@@ -45,11 +55,25 @@ namespace PhamNguyenTrongTuanMVC.Mapping
                     n => n.UpdatedByName,
                     opt => opt.MapFrom(src => src.UpdatedBy.AccountName)
                 )
+                .ForMember(n => n.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate));
+            CreateMap<NewsArticleDTO, AddNewsArticleViewModel>().ReverseMap();
+            CreateMap<NewsArticleDTO, UpdateNewsArticleViewModel>()
                 .ForMember(
-                    n => n.ModifiedDate,
-                    opt => opt.MapFrom(src => src.ModifiedDate ?? src.CreatedDate)
-                );
-            ;
+                    n => n.CreatedByName,
+                    opt => opt.MapFrom(src => src.CreatedBy.AccountName)
+                )
+                .ForMember(
+                    n => n.UpdatedByName,
+                    opt => opt.MapFrom(src => src.UpdatedBy.AccountName)
+                )
+                .ReverseMap();
+
+            #endregion
+
+            #region =========== News Article Mapping ===========
+            CreateMap<TagDTO, Tag>().ReverseMap();
+
+            #endregion
         }
     }
 }

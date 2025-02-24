@@ -1,0 +1,153 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PhamNguyenTrongTuanMVC.Helpers
+@model PhamNguyenTrongTuanMVC.Models.NewsArticle.UpdateNewsArticleViewModel
+<!-- Modal -->
+<div class="modal fade"
+     id="editNewsArticleModal"
+     tabindex="-1"
+     role="dialog"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold"> New</span>
+                    <span class="fw-light"> NewsArticle </span>
+                </h5>
+                <button type="button"
+                        class="close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="Edit" asp-controller="NewsArticle" method="post" id="updateNewsArticleForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <p class="small">
+                        Update article using this form, make sure you
+                        fill them all
+                    </p>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="NewsArticleId"></label>
+                        <input disabled asp-for="NewsArticleId" class="form-control" placeholder="Article Title" />
+                        <input hidden asp-for="NewsArticleId" class="form-control" placeholder="Article Title" />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="NewsTitle"></label>
+                        <input asp-for="NewsTitle" class="form-control" placeholder="Article Title" />
+                        <span asp-validation-for="NewsTitle" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CreatedByName"></label>
+                                <input disabled asp-for="CreatedByName" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CreatedDate"></label>
+                                <input disabled value="@FormatHelper.FormatActualTime(Model.CreatedDate)" class="form-control" />
+                                <input hidden asp-for="CreatedDate" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UpdatedByName"></label>
+                                <input disabled asp-for="UpdatedByName" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ModifiedDate"></label>
+                                <input disabled value="@FormatHelper.FormatActualTime(Model.ModifiedDate)" class="form-control" />
+                                <input hidden asp-for="ModifiedDate" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Headline"></label>
+                        <input asp-for="Headline" class="form-control" placeholder="Article Headline" />
+                        <span asp-validation-for="Headline" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="NewsContent"></label>
+                        <textarea asp-for="NewsContent" class="form-control" placeholder="Article Content" rows="7"></textarea>
+                        <span asp-validation-for="NewsContent" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="NewsStatus"></label>
+                                <select asp-for="NewsStatus" class="form-control" style="cursor: pointer !important">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                                <span asp-validation-for="NewsStatus" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CategoryId"></label>
+                                <select asp-for="CategoryId" class="form-control" style="cursor: pointer !important">
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                        <option value="@category.CategoryId">@category.CategoryName</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Select Tags</label>
+                        <div class="selectgroup selectgroup-pills">
+                            @foreach (var tag in Model.Tags)
+                            {
+                                <label class="selectgroup-item">
+                                    <input type="checkbox"
+                                           name="TagIds"
+                                           value="@tag.TagId"
+                                           class="selectgroup-input"
+                                    @(Model.TagIds.Contains(tag.TagId) ? "checked" : "") />
+                                    <span class="selectgroup-button">@tag.TagName</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="NewsSource"></label>
+                        <div class="input-group">
+                            <button class="btn btn-black btn-border" type="button" id="previewImageBtn">
+                                Preview
+                            </button>
+                            <input asp-for="NewsSource" class="form-control" placeholder="Article thumbnail" />
+                        </div>
+                        <span asp-validation-for="NewsSource" class="text-danger"></span>
+                        <div id="imagePreview">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="updateNewsArticleButton">
+                        Update
+                    </button>
+                    <button type="button"
+                            class="btn btn-danger"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->

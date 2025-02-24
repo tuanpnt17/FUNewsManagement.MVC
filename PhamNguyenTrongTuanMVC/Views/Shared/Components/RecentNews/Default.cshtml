@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ServiceLayer.Models.NewsArticleDTO>
+﻿@using PhamNguyenTrongTuanMVC.Helpers
+@model IEnumerable<ServiceLayer.Models.NewsArticleDTO>
 
 <div class="blog__sidebar__item">
     <h4>Recent News</h4>
@@ -11,7 +12,7 @@
                 </div>
                 <div class="blog__sidebar__recent__item__text">
                     <h6 style="font-weight: 650">@item.NewsTitle</h6>
-                    <span>@item.CreatedDate.ToString("MMM dd, yyyy")</span>
+                    <span>@FormatHelper.FormatActualTime(item.CreatedDate)</span>
                 </div>
             </a>
         }
