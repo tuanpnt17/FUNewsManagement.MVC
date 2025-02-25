@@ -5,7 +5,7 @@ namespace PhamNguyenTrongTuanMVC.Models.Account
 {
     public class ViewAccountViewModel
     {
-        [Display(Name = "Id")]
+        [Display(Name = "Account Id")]
         public int AccountId { get; set; }
 
         [Display(Name = "Name")]

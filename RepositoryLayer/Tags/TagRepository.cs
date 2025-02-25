@@ -15,7 +15,7 @@ public class TagRepository : ITagRepository
 
     public async Task<IEnumerable<Tag>> ListAllAsync()
     {
-        var tags = await _context.Tags.ToListAsync();
+        var tags = await _context.Tags.OrderByDescending(t => t.TagId).ToListAsync();
         return tags;
     }
 

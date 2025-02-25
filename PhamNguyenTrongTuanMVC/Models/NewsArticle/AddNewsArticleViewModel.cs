@@ -7,11 +7,6 @@ namespace PhamNguyenTrongTuanMVC.Models.NewsArticle
     public class AddNewsArticleViewModel
     {
         [Required]
-        [StringLength(20)]
-        [Display(Name = "Article Id")]
-        public string NewsArticleId { get; set; } = string.Empty;
-
-        [Required]
         [StringLength(400)]
         [Display(Name = "Title")]
         public string NewsTitle { get; set; } = string.Empty;

@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Security.Cryptography;
+using System.Text;
+using AutoMapper;
 using RepositoryLayer.Entities;
 using RepositoryLayer.Enums;
 using RepositoryLayer.NewsArticles;
@@ -69,6 +71,7 @@ namespace ServiceLayer.NewsArticle
             string currentUserId
         )
         {
+            articleDto.NewsArticleId = GenerateUniqueId();
             if (int.TryParse(currentUserId, out var userId))
             {
                 articleDto.CreatedById = userId;
@@ -90,6 +93,24 @@ namespace ServiceLayer.NewsArticle
             var addedNewsArticle = await _articleRepository.CreateAsync(article);
             var articleDtoToReturn = _mapper.Map<NewsArticleDTO>(addedNewsArticle);
             return articleDtoToReturn;
+        }
+
+        private string GenerateUniqueId()
+        {
+            // Tạo GUID mới
+            var guid = Guid.NewGuid();
+
+            // Tính MD5 hash của GUID (dạng chuỗi)
+            using var md5 = MD5.Create();
+            var hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(guid.ToString()));
+            // Chuyển đổi hash thành chuỗi hex
+            var sb = new StringBuilder();
+            foreach (var b in hashBytes)
+            {
+                sb.Append(b.ToString("X2")); // "X2" in hoa, dùng "x2" nếu muốn chữ thường
+            }
+            // Lấy 6 ký tự đầu tiên của chuỗi hash
+            return sb.ToString()[..6];
         }
 
         public async Task<int?> UpdateNewsArticleAsync(

@@ -5,7 +5,7 @@ using PhamNguyenTrongTuanMVC.Models.NewsArticle;
 using RepositoryLayer.Entities;
 using ServiceLayer.Models;
 
-namespace PhamNguyenTrongTuanMVC.Mapping
+namespace PhamNguyenTrongTuanMVC.Helpers
 {
     public class MappingProfile : Profile
     {

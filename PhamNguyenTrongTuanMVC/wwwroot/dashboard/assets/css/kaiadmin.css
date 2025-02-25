@@ -2995,7 +2995,7 @@ label.error {
   font-size: .95rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 12px 24px !important;
+  padding: 8px 12px !important;
   border-bottom-width: 1px;
   font-weight: 600; }
 .table td, .table th {

@@ -1,0 +1,106 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PhamNguyenTrongTuanMVC.Helpers
+@using RepositoryLayer.Enums
+@model ServiceLayer.Models.PaginatedList<PhamNguyenTrongTuanMVC.Models.NewsArticle.ViewNewsArticleViewModel>
+@{
+    Layout = "_DashboardLayout";
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-title">News Article Analysis</div>
+        <form class="d-flex align-items-center" asp-action="Report" method="get" id="filterDateForm">
+            <div class="form-group">
+                <input class="form-control" type="date" name="startDate" value="@(Convert.ToDateTime(ViewData["StartDate"]).ToLocalTime().ToString("yyyy-MM-dd"))" id="startDateControl" />
+            </div>
+            <span> - </span>
+            <div class="form-group">
+                <input class="form-control" type="date" name="endDate" value="@(Convert.ToDateTime(ViewData["EndDate"]).ToLocalTime().ToString("yyyy-MM-dd"))" id="endDateControl" />
+            </div>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <!-- Projects table -->
+            <table class="table align-items-center mb-0">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Headline</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Date modified</th>
+                        <th scope="col">Updated By</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var newsArticle in Model)
+                    {
+                        <tr>
+                            <td>@newsArticle.NewsArticleId</td>
+                            <td>@FormatHelper.TruncateString(newsArticle.NewsTitle, 4)</td>
+                            <td>@FormatHelper.TruncateString(newsArticle.Headline, 5)</td>
+                            <td>@newsArticle.CategoryName</td>
+                            <td>@FormatHelper.FormatActualTime(@newsArticle.ModifiedDate)</td>
+                            <td>@newsArticle.CreatedByName</td>
+                            <td><span class="@(newsArticle.NewsStatus != NewsStatus.Inactive? "badge badge-success" : "badge badge-danger")">@newsArticle.NewsStatus</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center" style="line-height: unset !important; padding: 10px 20px 5px !important">
+        <div class="dataTables_info" id="add-row_info" role="status" aria-live="polite">Showing 1 to 6 of 6 entries</div>
+        <ul class="pagination">
+            <li class="paginate_button page-item previous @(!Model.HasPreviousPage ? "disabled" : "")">
+                <a asp-action="Report"
+                   asp-route-startDate="@(Convert.ToDateTime(ViewData["startDate"]).ToLocalTime().ToString("yyyy-MM-dd"))"
+                   asp-route-endDate="@(Convert.ToDateTime(ViewData["EndDate"]).ToLocalTime().ToString("yyyy-MM-dd"))"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   tabindex="0" class="page-link">Previous</a>
+            </li>
+
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="paginate_button page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a asp-action="Report"
+                       asp-route-startDate="@(Convert.ToDateTime(ViewData["startDate"]).ToLocalTime().ToString("yyyy-MM-dd"))"
+                       asp-route-endDate="@(Convert.ToDateTime(ViewData["EndDate"]).ToLocalTime().ToString("yyyy-MM-dd"))"
+                       asp-route-pageNumber="@i"
+                       tabindex="0" class="page-link">@i</a>
+                </li>
+            }
+
+            <li class="paginate_button page-item previous @(!Model.HasNextPage ? "disabled" : "")">
+                <a asp-action="Report"
+                   asp-route-startDate="@(Convert.ToDateTime(ViewData["startDate"]).ToLocalTime().ToString("yyyy-MM-dd"))"
+                   asp-route-endDate="@(Convert.ToDateTime(ViewData["EndDate"]).ToLocalTime().ToString("yyyy-MM-dd"))"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   tabindex="0" class="page-link">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+    @section Scripts {
+        <script>
+
+            $(document).ready(function() {
+                $('#startDateControl, #endDateControl').on('change', function() {
+                    $('#filterDateForm').submit();
+                });
+                var dateError = '@TempData["DateRangeError"]';
+                console.log(dateError)
+                if (dateError && dateError.trim().length > 0) {
+                    swal("Bad request!", dateError, {
+                  icon: "error",
+                  buttons: {
+                    confirm: {
+                      className: "btn btn-danger",
+                    },
+                  },
+                });            }
+            });
+        </script>
+    }

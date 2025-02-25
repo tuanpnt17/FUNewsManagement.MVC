@@ -18,6 +18,7 @@ namespace RepositoryLayer.Categories
             var categories = await _context
                 .Categories.Include(c => c.NewsArticles)
                 .Include(c => c.ParentCategory)
+                .OrderByDescending(c => c.CategoryId)
                 .ToListAsync();
             return categories;
         }

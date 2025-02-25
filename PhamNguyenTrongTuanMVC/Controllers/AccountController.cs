@@ -30,8 +30,11 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> List()
+    public async Task<IActionResult> List(string sortOrder)
     {
+        ViewData["IdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "id_asc" : "id_desc";
+        ViewData["NameSortParam"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "name_asc";
+        ViewData["EmailSortParam"] = string.IsNullOrEmpty(sortOrder) ? "email_desc" : "email_asc";
         var accountDtos = await _accountService.ListAllAccounts();
         var listAccountViewModel = _mapper.Map<IEnumerable<ViewAccountViewModel>>(accountDtos);
         return View(listAccountViewModel);
@@ -85,6 +88,7 @@ public class AccountController : Controller
             return PartialView("_UpdateAccountModal", updateAccountViewModel);
         }
 
+        // Todo: Update check email
         var accountDto = _mapper.Map<AccountDTO>(updateAccountViewModel);
 
         var updatedAccount = await _accountService.UpdateAccountAsync(accountDto);
@@ -169,7 +173,7 @@ public class AccountController : Controller
             CookieAuthenticationDefaults.AuthenticationScheme,
             adminPrincipal
         );
-        return RedirectToAction("Chart", "Dashboard");
+        return RedirectToAction("Report", "Dashboard");
     }
 
     [Authorize]

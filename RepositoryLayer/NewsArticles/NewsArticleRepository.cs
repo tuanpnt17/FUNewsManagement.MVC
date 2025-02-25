@@ -32,6 +32,7 @@ namespace RepositoryLayer.NewsArticles
                 .Include(a => a.CreatedBy)
                 .Include(a => a.UpdatedBy)
                 .Include(a => a.NewsTags)
+                .OrderByDescending(a => a.ModifiedDate)
                 .ToListAsync();
             return newsArticles;
         }

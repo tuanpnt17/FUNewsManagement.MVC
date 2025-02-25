@@ -25,7 +25,7 @@ namespace RepositoryLayer.Accounts
 
         public async Task<IEnumerable<SystemAccount>> ListAllAsync()
         {
-            return await _context.SystemAccounts.ToListAsync();
+            return await _context.SystemAccounts.OrderByDescending(a => a.AccountId).ToListAsync();
         }
 
         public async Task<SystemAccount> CreateAsync(SystemAccount account)

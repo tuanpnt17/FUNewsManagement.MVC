@@ -11,12 +11,17 @@
 <div class="col-md-12">
     <div class="card">
         <div class="card-header">
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-between">
                 <h4 class="card-title">News Article Management</h4>
-                <button class="btn btn-primary btn-round ms-auto" type="button" id="openCreateModal">
-                    <i class="fa fa-plus"></i>
-                    Create
-                </button>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-secondary btn-round ms-auto" type="button" id="openManageTagModal">
+                        <i class="fas fa-tag"></i> Manage Tags
+                    </button>
+
+                    <button class="btn btn-primary btn-round ms-auto" type="button" id="openCreateModal">
+                        <i class="fa fa-plus"></i> Create
+                    </button>
+                </div>
             </div>
         </div>
         <div class="card-body">
@@ -29,10 +34,11 @@
                             <th>@Html.DisplayNameFor(n => n.NewsArticleId)</th>
                             <th>@Html.DisplayNameFor(n => n.NewsTitle)</th>
                             <th>@Html.DisplayNameFor(n => n.Headline)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryName)</th>
                             <th>@Html.DisplayNameFor(n => n.CreatedByName)</th>
                             <th>@Html.DisplayNameFor(n => n.ModifiedDate)</th>
-                            <th>@Html.DisplayNameFor(n => n.NewsStatus)</th>
-                            <th style="width: 10%">Action</th>
+                            <th style="text-align: center">@Html.DisplayNameFor(n => n.NewsStatus)</th>
+                            <th style="width: 5%; text-align: center">Action</th>
                         </tr>
                     </thead>
                     <tfoot>
@@ -40,6 +46,7 @@
                             <th>@Html.DisplayNameFor(n => n.NewsArticleId)</th>
                             <th>@Html.DisplayNameFor(n => n.NewsTitle)</th>
                             <th>@Html.DisplayNameFor(n => n.Headline)</th>
+                            <th>@Html.DisplayNameFor(n => n.CategoryName)</th>
                             <th>@Html.DisplayNameFor(n => n.CreatedByName)</th>
                             <th>@Html.DisplayNameFor(n => n.ModifiedDate)</th>
                             <th>@Html.DisplayNameFor(n => n.NewsStatus)</th>
@@ -52,6 +59,7 @@
                                 <td>@newsArticle.NewsArticleId</td>
                                 <td>@FormatHelper.TruncateString(newsArticle.NewsTitle, 4)</td>
                                 <td>@FormatHelper.TruncateString(newsArticle.Headline, 5)</td>
+                                <td>@newsArticle.CategoryName</td>
                                 <td>@newsArticle.CreatedByName</td>
                                 <td>@FormatHelper.FormatActualTime(@newsArticle.ModifiedDate)</td>
                                 <td><span class="@(newsArticle.NewsStatus != NewsStatus.Inactive? "badge badge-success" : "badge badge-danger")">@newsArticle.NewsStatus</span></td>
@@ -196,7 +204,7 @@
                 }
             }, "html");
         });
-        
+
         $(document).ready(function () {
             $("#openCreateModal").click(function () {
                 $.get("/NewsArticle/Add", function (data) {
