@@ -4,6 +4,11 @@
 
 FUNewsManagementSystem is a comprehensive News Management System designed for universities and educational institutions. The application enables efficient management, organization, and publishing of news and content to websites and other channels. It is built using ASP.NET MVC with Entity Framework Core and features a modern, responsive UI powered by Bootstrap 5.
 
+## Deployment
+
+The application is deployed on Render.com and is accessible at:
+- **Live Demo:** [https://prn222asm01.tpnt.io.vn/](https://prn222asm01.tpnt.io.vn/)
+
 ## Key Features
 
 ### Account Management
@@ -34,11 +39,6 @@ FUNewsManagementSystem is a comprehensive News Management System designed for un
 - **Date-Based Filtering:** Filter news articles by start and end dates.
 - **Statistical Reporting:** Generate reports (sorted in descending order) based on news article creation dates.
 - **Search Functionality:** Real-time search for news articles.
-
-## Deployment
-
-The application is deployed on Render.com and is accessible at:
-- **Live Demo:** [https://prn222asm01.tpnt.io.vn/](https://prn222asm01.tpnt.io.vn/)
 
 ## Getting Started
 
