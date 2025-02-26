@@ -62,17 +62,17 @@ namespace PhamNguyenTrongTuanMVC.Controllers
             {
                 searchString = currentFilter;
             }
-
             ViewData["CurrentFilter"] = searchString;
             var articles = await _newsArticleService.GetAllNewsArticleAsync();
 
             var viewModels = _mapper.Map<IEnumerable<ViewNewsArticleViewModel>>(articles);
             if (!string.IsNullOrEmpty(searchString))
             {
+                searchString = searchString.Trim().ToLower();
                 viewModels = viewModels.Where(a =>
-                    a.NewsTitle.Contains(searchString)
-                    || a.UpdatedByName.Contains(searchString)
-                    || a.CreatedByName.Contains(searchString)
+                    a.NewsTitle.ToLower().Contains(searchString)
+                    || a.UpdatedByName.ToLower().Contains(searchString)
+                    || a.CreatedByName.ToLower().Contains(searchString)
                 );
             }
             var pageSize = 3;
