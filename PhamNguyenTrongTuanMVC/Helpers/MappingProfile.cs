@@ -16,6 +16,9 @@ namespace PhamNguyenTrongTuanMVC.Helpers
             CreateMap<AccountDTO, ViewAccountViewModel>().ReverseMap();
             CreateMap<AccountDTO, AddNewAccountViewModel>().ReverseMap();
             CreateMap<AccountDTO, UpdateAccountViewModel>().ReverseMap();
+            CreateMap<AccountDTO, UpdateProfileViewModel>()
+                .ForMember(x => x.ConfirmPassword, opt => opt.MapFrom(a => a.AccountPassword))
+                .ReverseMap();
             #endregion
 
             #region =========== Category Mapping ===========

@@ -98,7 +98,7 @@ a:hover,
 a:focus {
 	text-decoration: none;
 	outline: none;
-	color: #ffffff;
+	color: #333333;
 }
 
 ul,
@@ -639,7 +639,7 @@ ol {
 }
 
 .hero__search__form {
-	width: 610px;
+	width: 550px;
 	height: 50px;
 	border: 1px solid #ebebeb;
 	position: relative;

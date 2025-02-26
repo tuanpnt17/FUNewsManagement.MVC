@@ -15,4 +15,6 @@ public interface IAccountService
     Task<int?> DeleteAccountAsync(int accountId);
 
     Task<IEnumerable<AccountDTO>> ListAllAccounts();
+
+    Task<int?> UpdateProfile(AccountDTO account);
 }

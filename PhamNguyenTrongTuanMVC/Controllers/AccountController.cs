@@ -218,8 +218,26 @@ public class AccountController : Controller
     }
 
     [Authorize(Roles = "Staff")]
+    [HttpGet]
     public async Task<IActionResult> Profile()
     {
-        return View();
+        var email = HttpContext.User.FindFirstValue(ClaimTypes.Email)!;
+        var accountDto = await _accountService.GetAcountByEmailAsync(email);
+        var viewModel = _mapper.Map<UpdateProfileViewModel>(accountDto);
+        return View(viewModel);
+    }
+
+    [Authorize(Roles = "Staff")]
+    [HttpPost]
+    public async Task<IActionResult> Profile(UpdateProfileViewModel updateProfileViewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(updateProfileViewModel);
+        }
+        var accountDto = _mapper.Map<AccountDTO>(updateProfileViewModel);
+        var effectedRow = await _accountService.UpdateProfile(accountDto);
+        TempData["Success"] = "Update profile successfully!!!";
+        return RedirectToAction("Profile");
     }
 }

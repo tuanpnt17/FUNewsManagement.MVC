@@ -83,4 +83,19 @@ public class AccountService : IAccountService
         var accountDtos = _mapper.Map<IEnumerable<AccountDTO>>(accounts);
         return accountDtos;
     }
+
+    public async Task<int?> UpdateProfile(AccountDTO account)
+    {
+        var repoAccount = await _accountRepository.GetAccountByIdAsync(account.AccountId);
+        if (repoAccount == null)
+            return null;
+
+        if (account.AccountRole == default)
+        {
+            account.AccountRole = repoAccount.AccountRole;
+        }
+        var updateAccount = _mapper.Map<SystemAccount>(account);
+        var effected = await _accountRepository.UpdateAsync(updateAccount);
+        return effected;
+    }
 }

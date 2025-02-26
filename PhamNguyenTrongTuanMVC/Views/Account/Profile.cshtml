@@ -1,8 +1,73 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
     Layout = "_DashboardLayout";
 }
 
+@model PhamNguyenTrongTuanMVC.Models.Account.UpdateProfileViewModel;
+
 <h2>Profile</h2>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            Update Profile
+        </div>
+        <div class="card-body">
+
+            <form asp-action="Profile" asp-controller="Account" method="post">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <input asp-for="AccountId" hidden />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="AccountName"></label>
+                    <input asp-for="AccountName" class="form-control" placeholder="Your name" />
+                    <span asp-validation-for="AccountName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="AccountEmail"></label>
+                    <input asp-for="AccountEmail" class="form-control" placeholder="Your email" />
+                    <span asp-validation-for="AccountEmail" class="text-danger"></span>
+                </div>
+
+                <div id="passwordSection">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="AccountPassword"></label>
+                        <input asp-for="AccountPassword" class="form-control" value="@Model.AccountPassword" placeholder="Password" />
+                        <span asp-validation-for="AccountPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="ConfirmPassword"></label>
+                        <input asp-for="ConfirmPassword" class="form-control" value="@Model.AccountPassword" placeholder="Confirm Password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Update Profile</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Script này sẽ kích hoạt HTML5 form validation của Bootstrap 5 -->
+    <script>
+        $(document).ready(function() {
+            var dataSuccess = '@TempData["Success"]';
+            if (dataSuccess && dataSuccess.trim().length > 0) {
+                swal("Success!", dataSuccess, {
+                    icon: "success",
+                    buttons: {
+                        confirm: {
+                          className: "btn btn-success",
+                        },
+                    },
+                });            
+            }
+        });
+    </script>
+
+}
