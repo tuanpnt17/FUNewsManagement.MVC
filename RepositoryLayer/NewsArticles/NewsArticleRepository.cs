@@ -18,6 +18,7 @@ namespace RepositoryLayer.NewsArticles
             var newsArticle = await _context
                 .NewsArticles.Include(a => a.Category)
                 .Include(a => a.CreatedBy)
+                .Include(a => a.UpdatedBy)
                 .Include(a => a.NewsTags!)
                 .ThenInclude(n => n.Tag)
                 .FirstOrDefaultAsync(a => a.NewsArticleId == id);
@@ -31,6 +32,7 @@ namespace RepositoryLayer.NewsArticles
                 .Include(a => a.CreatedBy)
                 .Include(a => a.UpdatedBy)
                 .Include(a => a.NewsTags)
+                .OrderByDescending(a => a.ModifiedDate)
                 .ToListAsync();
             return newsArticles;
         }
@@ -44,12 +46,23 @@ namespace RepositoryLayer.NewsArticles
 
         public async Task<int?> UpdateAsync(NewsArticle newsArticle)
         {
-            var systemAccount = await GetArticleByIdAsync(newsArticle.NewsArticleId);
-            if (systemAccount == null)
+            var article = await GetArticleByIdAsync(newsArticle.NewsArticleId);
+            if (article == null)
             {
                 return null;
             }
-            await Task.Run(() => _context.NewsArticles.Update(systemAccount));
+
+            article.ModifiedDate = DateTime.UtcNow;
+            article.NewsTags = newsArticle.NewsTags;
+            article.NewsTitle = newsArticle.NewsTitle;
+            article.Headline = newsArticle.Headline;
+            article.NewsSource = newsArticle.NewsSource;
+            article.NewsContent = newsArticle.NewsContent;
+            article.NewsStatus = newsArticle.NewsStatus;
+            article.CategoryId = newsArticle.CategoryId;
+            article.UpdatedById = newsArticle.UpdatedById;
+
+            await Task.Run(() => _context.NewsArticles.Update(article));
             var effectedRow = await _context.SaveChangesAsync();
             return effectedRow;
         }

@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims
+@using RepositoryLayer.Enums
 
 
 <!DOCTYPE html>
@@ -10,26 +11,26 @@
 
     <title>@ViewBag.Title</title>
     <link rel="icon"
-          href="~/dashboard/assets/img/kaiadmin/favicon.ico"
+          href="~/dashboard/assets/img/kaiadminadmin/favicon.ico"
           type="image/x-icon" />
 
     <!-- Fonts and icons -->
     <script src="~/dashboard/assets/js/plugin/webfont/webfont.min.js"></script>
     <script>
         WebFont.load({
-          google: { families: ["Public Sans:300,400,500,600,700"] },
-          custom: {
-            families: [
-              "Font Awesome 5 Solid",
-              "Font Awesome 5 Regular",
-              "Font Awesome 5 Brands",
-              "simple-line-icons",
-            ],
-            urls: ["/dashboard/assets/css/fonts.min.css"],
-          },
-          active: function () {
-            sessionStorage.fonts = true;
-          },
+        google: { families: ["Public Sans:300,400,500,600,700"] },
+        custom: {
+        families: [
+        "Font Awesome 5 Solid",
+        "Font Awesome 5 Regular",
+        "Font Awesome 5 Brands",
+        "simple-line-icons",
+        ],
+        urls: ["/dashboard/assets/css/fonts.min.css"],
+        },
+        active: function () {
+        sessionStorage.fonts = true;
+        },
         });
     </script>
 
@@ -48,11 +49,7 @@
             <div class="sidebar-logo">
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
-                    <a href="@Url.Action("Chart", "Dashboard")" class="logo">
-                        @* <img src="~/dashboard/assets/img/kaiadmin/logo_light.svg"
-                             alt="navbar brand"
-                             class="navbar-brand"
-                             height="20" /> *@
+                    <a href="@Url.Action("Report", "Dashboard")" class="logo">
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
@@ -68,56 +65,73 @@
                 </div>
                 <!-- End Logo Header -->
             </div>
+
+            @{
+                var role = User.FindFirst(x => x.Type == ClaimTypes.Role)!.Value;
+            }
+
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
                     <ul class="nav nav-secondary">
-                        <li class="nav-item active">
-                            <a
-                               href="#dashboard"
-                               class="collapsed"
-                               aria-expanded="false">
-                                <i class="fas fa-home"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
+                        @if (role == AccountRole.Admin.ToString())
+                        {
+                            <li class="nav-item active">
+                                <a asp-controller="Dashboard" asp-action="Report">
+                                    <i class="fas fa-home"></i>
+                                    <p>Dashboard</p>
+                                </a>
+                            </li>
+                        }
+
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
                             <h4 class="text-section">Management</h4>
                         </li>
-                        <li class="nav-item">
-                            <a asp-controller="Account" asp-action="List">
-                                <i class="fas fa-users"></i>
-                                <p>Accounts</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-controller="Category" asp-action="List">
-                                <i class="fas fa-layer-group"></i>
-                                <p>Categories</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-controller="NewsArticle" asp-action="List">
-                                <i class="fas fa-newspaper"></i>
-                                <p>News Articles</p>
-                            </a>
-                        </li>
+                        @if (role == AccountRole.Admin.ToString())
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Account" asp-action="List">
+                                    <i class="fas fa-users"></i>
+                                    <p>Accounts</p>
+                                </a>
+                            </li>
+                        }
+                        @if (role == AccountRole.Staff.ToString())
+                        {
+
+
+                            <li class="nav-item">
+                                <a asp-controller="Category" asp-action="List">
+                                    <i class="fas fa-layer-group"></i>
+                                    <p>Categories</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="NewsArticle" asp-action="List">
+                                    <i class="fas fa-newspaper"></i>
+                                    <p>News Articles</p>
+                                </a>
+                            </li>
+                        }
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
                             <h4 class="text-section">Settings</h4>
                         </li>
+                        @if (role == AccountRole.Staff.ToString())
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Account" asp-action="Profile">
+                                    <i class="fas fa-user-alt"></i>
+                                    <p>Profile</p>
+                                </a>
+                            </li>
+                        }
                         <li class="nav-item">
-                            <a href="#base">
-                                <i class="fas fa-user-alt"></i>
-                                <p>Profile</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#base">
+                            <a asp-controller="Account" asp-action="Logout">
                                 <i class="fas fa-arrow-circle-right"></i>
                                 <p>Logout</p>
                             </a>
@@ -133,12 +147,7 @@
                 <div class="main-header-logo">
                     <!-- Logo Header -->
                     <div class="logo-header" data-background-color="dark">
-                        <a href="index.html" class="logo">
-                            <img src="~/dashboard/assets/img/kaiadmin/logo_light.svg"
-                                 alt="navbar brand"
-                                 class="navbar-brand"
-                                 height="20" />
-                        </a>
+                        
                         <div class="nav-toggle">
                             <button class="btn btn-toggle toggle-sidebar">
                                 <i class="gg-menu-right"></i>
@@ -157,16 +166,7 @@
                 <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
                     <div class="container-fluid">
                         <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <button type="submit" class="btn btn-search pe-1">
-                                        <i class="fa fa-search search-icon"></i>
-                                    </button>
-                                </div>
-                                <input type="text"
-                                       placeholder="Search ..."
-                                       class="form-control" />
-                            </div>
+                            
                         </nav>
 
                         <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
@@ -180,13 +180,7 @@
                                     <i class="fa fa-search"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-search animated fadeIn">
-                                    <form class="navbar-left navbar-form nav-search">
-                                        <div class="input-group">
-                                            <input type="text"
-                                                   placeholder="Search ..."
-                                                   class="form-control" />
-                                        </div>
-                                    </form>
+                                    
                                 </ul>
                             </li>
                             <li class="nav-item topbar-user dropdown hidden-caret">
@@ -206,37 +200,39 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated fadeIn">
                                     <div class="dropdown-user-scroll scrollbar-outer">
-                                    <li>
-                                        <div class="user-box">
-                                            <div class="avatar-lg">
-                                                <img src="~/dashboard/assets/img/profile.jpg"
-                                                     alt="image profile"
-                                                     class="avatar-img rounded" />
+                                        <li>
+                                            <div class="user-box">
+                                                <div class="avatar-lg">
+                                                    <img src="~/dashboard/assets/img/profile.jpg"
+                                                         alt="image profile"
+                                                         class="avatar-img rounded" />
+                                                </div>
+                                                <div class="u-text">
+                                                    <h4>@User.Identity?.Name</h4>
+                                                    <p class="text-muted">@User.FindFirst(x => x.Type == ClaimTypes.Email)!.Value</p>
+                                                    @if(role != AccountRole.Admin.ToString()) {
+                                                        <a href="@Url.Action("Profile", "Account")"
+                                                           class="btn btn-xs btn-secondary btn-sm">Setting</a>
+                                                    }
+                                                </div>
                                             </div>
-                                            <div class="u-text">
-                                                <h4>@User.Identity?.Name</h4>
-                                                <p class="text-muted">@User.FindFirst(x => x.Type == ClaimTypes.Email)!.Value</p>
-                                                <a href="@Url.Action("Profile", "Account")"
-                                                   class="btn btn-xs btn-secondary btn-sm">Setting</a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="@Url.Action("Logout", "Account")">Logout</a>
-                                    </li>
+                                        </li>
+                                        <li>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="@Url.Action("Logout", "Account")">Logout</a>
+                                        </li>
+                                    </div>
+                                </ul>
+                            </li>
+                        </ul>
                     </div>
-                    </ul>
-                    </li>
-                    </ul>
-            </div>
-            </nav>
+                </nav>
             <!-- End Navbar -->
         </div>
 
         <div class="container">
             <div class="page-inner">
-                @RenderBody()
+                    @RenderBody()
             </div>
         </div>
 
@@ -408,7 +404,7 @@
 
     <!-- Chart JS -->
     <script src="~/dashboard/assets/js/plugin/chart.js/chart.min.js"></script>
-    
+
     <!-- jQuery Sparkline -->
     <script src="~/dashboard/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
 
@@ -434,7 +430,7 @@
     <!-- Kaiadmin DEMO methods, don't include it in your project! -->
     <script src="~/dashboard/assets/js/setting-demo.js"></script>
     <script src="~/dashboard/assets/js/demo.js"></script>
-    
+
 
     @await RenderSectionAsync("Scripts", required: false)
 

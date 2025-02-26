@@ -30,15 +30,45 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> List()
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> List(
+        string? searchString,
+        string currentFilter,
+        int? pageNumber
+    )
     {
+        if (searchString != null)
+        {
+            pageNumber = 1;
+        }
+        else
+        {
+            searchString = currentFilter;
+        }
+
+        ViewData["CurrentFilter"] = searchString;
         var accountDtos = await _accountService.ListAllAccounts();
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            accountDtos = accountDtos.Where(a =>
+                a.AccountName.Contains(searchString) || a.AccountEmail.Contains(searchString)
+            );
+        }
+
         var listAccountViewModel = _mapper.Map<IEnumerable<ViewAccountViewModel>>(accountDtos);
-        return View(listAccountViewModel);
+
+        var pageSize = 3;
+        var paginatedList = PaginatedList<ViewAccountViewModel>.Create(
+            listAccountViewModel.AsQueryable(),
+            pageNumber ?? 1,
+            pageSize
+        );
+        return View(paginatedList);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Add(
         [FromForm]
         [Bind("AccountName,AccountEmail,AccountRole")]
@@ -50,11 +80,17 @@ public class AccountController : Controller
             return PartialView("_AddAccountModal", addAccountViewModel);
         }
         var accountDto = _mapper.Map<AccountDTO>(addAccountViewModel);
-        await _accountService.CreateNewAccountAsync(accountDto);
+        var result = await _accountService.CreateNewAccountAsync(accountDto);
+        if (result == null)
+        {
+            ModelState.AddModelError("AccountEmail", "Email is already exited");
+            return PartialView("_AddAccountModal", addAccountViewModel);
+        }
         return RedirectToAction("List");
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public IActionResult Add()
     {
         var addAccountViewModel = new AddNewAccountViewModel()
@@ -66,6 +102,7 @@ public class AccountController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var accountDto = await _accountService.GetAcountByIdAsync(id);
@@ -76,6 +113,7 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(UpdateAccountViewModel updateAccountViewModel)
     {
         if (!ModelState.IsValid)
@@ -83,6 +121,7 @@ public class AccountController : Controller
             return PartialView("_UpdateAccountModal", updateAccountViewModel);
         }
 
+        // Todo: Update check email
         var accountDto = _mapper.Map<AccountDTO>(updateAccountViewModel);
 
         var updatedAccount = await _accountService.UpdateAccountAsync(accountDto);
@@ -90,6 +129,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var deleteEffected = await _accountService.DeleteAccountAsync(id);
@@ -125,7 +165,7 @@ public class AccountController : Controller
 
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Sid, accountDto.AccountEmail),
+                new(ClaimTypes.Sid, accountDto.AccountId.ToString()),
                 new(ClaimTypes.Name, accountDto.AccountName),
                 new(ClaimTypes.Email, accountDto.AccountEmail),
                 new(ClaimTypes.Role, accountDto.AccountRole.ToString()),
@@ -140,7 +180,7 @@ public class AccountController : Controller
             );
             if (accountDto.AccountRole == AccountRole.Staff)
             {
-                return RedirectToAction("Chart", "Dashboard");
+                return RedirectToAction("List", "Category");
             }
 
             return RedirectToAction("Index", "NewsArticle");
@@ -155,7 +195,7 @@ public class AccountController : Controller
         var adminClaims = new List<Claim>
         {
             new(ClaimTypes.Sid, _adminOption.Email),
-            new(ClaimTypes.Name, "System Admin"),
+            new(ClaimTypes.Name, _adminOption.Name),
             new(ClaimTypes.Email, _adminOption.Email),
             new(ClaimTypes.Role, AccountRole.Admin.ToString()),
         };
@@ -167,7 +207,7 @@ public class AccountController : Controller
             CookieAuthenticationDefaults.AuthenticationScheme,
             adminPrincipal
         );
-        return RedirectToAction("Chart", "Dashboard");
+        return RedirectToAction("Report", "Dashboard");
     }
 
     [Authorize]
@@ -177,9 +217,27 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-    [Authorize]
+    [Authorize(Roles = "Staff")]
+    [HttpGet]
     public async Task<IActionResult> Profile()
     {
-        return View();
+        var email = HttpContext.User.FindFirstValue(ClaimTypes.Email)!;
+        var accountDto = await _accountService.GetAcountByEmailAsync(email);
+        var viewModel = _mapper.Map<UpdateProfileViewModel>(accountDto);
+        return View(viewModel);
+    }
+
+    [Authorize(Roles = "Staff")]
+    [HttpPost]
+    public async Task<IActionResult> Profile(UpdateProfileViewModel updateProfileViewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(updateProfileViewModel);
+        }
+        var accountDto = _mapper.Map<AccountDTO>(updateProfileViewModel);
+        var effectedRow = await _accountService.UpdateProfile(accountDto);
+        TempData["Success"] = "Update profile successfully!!!";
+        return RedirectToAction("Profile");
     }
 }

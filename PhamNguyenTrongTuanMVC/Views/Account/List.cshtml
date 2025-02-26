@@ -1,4 +1,6 @@
-﻿@model IEnumerable<PhamNguyenTrongTuanMVC.Models.Account.ViewAccountViewModel>
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PhamNguyenTrongTuanMVC.Models.Account
+@model ServiceLayer.Models.PaginatedList<PhamNguyenTrongTuanMVC.Models.Account.ViewAccountViewModel>
 @{
     Layout = "_DashboardLayout";
     ViewBag.Title = "Accounts Management";
@@ -18,54 +20,101 @@
         <div class="card-body">
             <div id="modalContainer"></div>
             <div class="table-responsive">
-                <table id="add-row"
-                       class="display table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>@Html.DisplayNameFor(n => n.AccountId)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountName)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountEmail)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountRole)</th>
-                            <th style="width: 10%">Action</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>@Html.DisplayNameFor(n => n.AccountId)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountName)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountEmail)</th>
-                            <th>@Html.DisplayNameFor(n => n.AccountRole)</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        @foreach (var account in Model)
-                        {
-                            <tr>
-                                <td>@account.AccountId</td>
-                                <td>@account.AccountName</td>
-                                <td>@account.AccountEmail</td>
-                                <td>@account.AccountRole</td>
-                                <td>
-                                    <div class="form-button-action">
-                                        <button type="button"
-                                                data-accountid="@account.AccountId"
-                                                class="btn btn-link btn-primary btn-lg updateAccountBtn"
-                                                data-original-title="Edit Task">
-                                            <i class="fa fa-edit"></i>
-                                        </button>
-                                        <button type="button"
-                                                data-accountid="@account.AccountId"
-                                                class="btn btn-link btn-danger alert_demo_8"
-                                                data-original-title="Remove">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
+                <div id="add-row_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+                    <div class="row">
+                        <form class="col-sm-12 col-md-12" asp-action="List" method="get">
+                            <div id="add-row_filter" class="dataTables_filter">
+                                <label>
+                                    Search: <input name="SearchString" value="@ViewData["CurrentFilter"]" type="search" class="form-control form-control-sm" placeholder="" aria-controls="add-row" />
+                                </label>
+                            </div>
+                        </form>
+                    </div>
 
-                    </tbody>
-                </table>
+                    <div class="row mt-3">
+                        <div class="col-sm-12 col-md-12">
+                            <table id="add-row"
+                                   class="display table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Account Id</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th style="width: 10%; text-align: center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Account Id</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    @foreach (var account in Model)
+                                    {
+                                        <tr>
+                                            <td>@account.AccountId</td>
+                                            <td>@account.AccountName</td>
+                                            <td>@account.AccountEmail</td>
+                                            <td>@account.AccountRole</td>
+                                            <td>
+                                                <div class="form-button-action">
+                                                    <button type="button"
+                                                            data-accountid="@account.AccountId"
+                                                            class="btn btn-link btn-primary btn-lg updateAccountBtn"
+                                                            data-original-title="Edit Task">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button type="button"
+                                                            data-accountid="@account.AccountId"
+                                                            class="btn btn-link btn-danger alert_demo_8"
+                                                            data-original-title="Remove">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- #region Pagination -->
+                    <div class="d-flex justify-content-between">
+                        <div></div>
+                        <ul class="pagination">
+                            <li class="paginate_button page-item previous @(!Model.HasPreviousPage ? "disabled" : "")">
+                                <a asp-action="List"
+                                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                                   tabindex="0" class="page-link">Previous</a>
+                            </li>
+
+                            @for (var i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="paginate_button page-item @(i == Model.PageIndex ? "active" : "")">
+                                    <a asp-action="List"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                       asp-route-pageNumber="@i"
+                                       tabindex="0" class="page-link">@i</a>
+                                </li>
+                            }
+
+                            <li class="paginate_button page-item previous @(!Model.HasNextPage ? "disabled" : "")">
+                                <a asp-action="List"
+                                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                                   tabindex="0" class="page-link">Next</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- #endregion -->
+
+                </div>
             </div>
         </div>
     </div>
@@ -74,6 +123,7 @@
 
 @section Scripts {
     <script>
+
           $(document).on("click", ".alert_demo_8", function(event) {
             event.preventDefault(); // Ngăn hành động mặc định
 
@@ -98,7 +148,7 @@
             }).then((willDelete) => {
                 if (willDelete) {
                     // Gọi action method Delete qua AJAX sử dụng $.post
-                    $.post(url, {   
+                    $.post(url, {
                     }, function(response) {
                         console.log("+++++", response);
                         swal("Deleted!", "Your account has been deleted.", "success")
@@ -151,15 +201,14 @@
             }, "html");
         });
 
-        $(document).on("click", "#addRowButton", function(event){
+        $(document).on("click", "#addRowButton", function(event) {
             event.preventDefault();
 
-            // Xử lý submit form qua AJAX
             var form = $("#newAccountForm");
             var url = form.attr("action");
 
             $.post(url, form.serialize(), function(data) {
-
+                // Khi submit thành công, ẩn modal và xử lý PartialView trả về nếu có
                 $("#addRowModal").modal("hide");
                 var $container = $("<div>").html(data);
                 var $modal = $container.find(".modal");
@@ -167,13 +216,20 @@
                 if ($modal.length > 0) {
                     $("#addRowModal").replaceWith($modal);
                     $modal.modal("show");
-                } else {swal("Create Successfully!", "New account has been created.", "success")
-                            .then(() => {
-                                location.reload();
-                            });
+                } else {
+                    swal("Create Successfully!", "New account has been created.", "success")
+                        .then(() => {
+                            location.reload();
+                        });
                 }
-            }, "html");
+            }, "html")
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                // Lấy thông báo lỗi từ responseText
+                var errorMsg = jqXHR.responseText;
+                swal("Bad request", errorMsg, "error");
+            });
         });
+
         $(document).ready(function () {
 
             var action =
@@ -186,6 +242,23 @@
                     $("#addRowModal").modal("show");
                 });
             });
+
+            // Khi nhấn Enter trong input search
+            $('input[name="SearchString"]').on('keypress', function(e){
+                if(e.which === 13) { // 13 là mã của phím Enter
+                    e.preventDefault(); // Ngăn submit mặc định nếu cần
+                    $(this).closest('form').submit();
+                }
+            });
+
+            // Khi mất focus (blur) khỏi input search
+            $('input[name="SearchString"]').on('blur', function(){
+                // Có thể kiểm tra điều kiện nếu cần (ví dụ: không submit nếu giá trị trống)
+                if($(this).val().trim() !== ""){
+                    $(this).closest('form').submit();
+                }
+            });
+
         });
     </script>
 }

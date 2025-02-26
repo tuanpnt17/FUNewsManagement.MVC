@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PhamNguyenTrongTuanMVC.Models.Category;
 using ServiceLayer.Category;
@@ -6,6 +7,7 @@ using ServiceLayer.Models;
 
 namespace PhamNguyenTrongTuanMVC.Controllers
 {
+    [Authorize(Roles = "Staff")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -18,12 +20,37 @@ namespace PhamNguyenTrongTuanMVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(
+            string? searchString,
+            string currentFilter,
+            int? pageNumber
+        )
         {
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewData["CurrentFilter"] = searchString;
             var categoriesDto = await _categoryService.GetCategoriesAsync();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                categoriesDto = categoriesDto.Where(a =>
+                    a.CategoryName.Contains(searchString)
+                    || a.CategoryDescription.Contains(searchString)
+                );
+            }
             var categoriesViewModel = _mapper.Map<IEnumerable<CategoryViewModel>>(categoriesDto);
-
-            return View(categoriesViewModel);
+            var pageSize = 3;
+            var paginatedList = PaginatedList<CategoryViewModel>.Create(
+                categoriesViewModel.AsQueryable(),
+                pageNumber ?? 1,
+                pageSize
+            );
+            return View(paginatedList);
         }
 
         [HttpPost]

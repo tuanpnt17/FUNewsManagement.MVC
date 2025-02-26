@@ -3,7 +3,7 @@
     ViewBag.Title = "Category Management";
 }
 @using RepositoryLayer.Enums
-@model IEnumerable<PhamNguyenTrongTuanMVC.Models.Category.CategoryViewModel>
+@model ServiceLayer.Models.PaginatedList<PhamNguyenTrongTuanMVC.Models.Category.CategoryViewModel>
 
 
 
@@ -21,57 +21,109 @@
         <div class="card-body">
             <div id="modalContainer"></div>
             <div class="table-responsive">
-                <table id="add-row"
-                       class="display table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>@Html.DisplayNameFor(n => n.CategoryId)</th>
-                            <th>@Html.DisplayNameFor(n => n.CategoryName)</th>
-                            <th>@Html.DisplayNameFor(n => n.CategoryDescription)</th>
-                            <th>@Html.DisplayNameFor(n => n.NewsArticleCount)</th>
-                            <th>@Html.DisplayNameFor(n => n.CategoryStatus)</th>
-                            <th style="width: 10%">Action</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>@Html.DisplayNameFor(n => n.CategoryId)</th>
-                            <th>@Html.DisplayNameFor(n => n.CategoryName)</th>
-                            <th>@Html.DisplayNameFor(n => n.CategoryDescription)</th>
-                            <th>@Html.DisplayNameFor(n => n.NewsArticleCount)</th>
-                            <th>@Html.DisplayNameFor(n => n.CategoryStatus)</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        @foreach (var cateogory in Model)
-                        {
-                            <tr>
-                                <td>@cateogory.CategoryId</td>
-                                <td>@cateogory.CategoryName</td>
-                                <td>@cateogory.CategoryDescription</td>
-                                <td>@cateogory.NewsArticleCount</td>
-                                <td><span class="@(cateogory.CategoryStatus != CategoryStatus.Inactive ? "badge badge-success" : "badge badge-danger")">@cateogory.CategoryStatus</span></td>
-                                <td>
-                                    <div class="form-button-action">
-                                        <button type="button"
-                                                data-categoryid="@cateogory.CategoryId"
-                                                class="btn btn-link btn-primary btn-lg updateCategoryBtn"
-                                                data-original-title="Edit Task">
-                                            <i class="fa fa-edit"></i>
-                                        </button>
-                                        <button type="button"
-                                                data-categoryid="@cateogory.CategoryId"
-                                                class="btn btn-link btn-danger deleteCategoryBtn"
-                                                data-original-title="Remove">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
+                <div id="add-row_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+                    <!-- #region search -->
+                    <div class="row">
+                        <form class="col-sm-12 col-md-12" asp-action="List" method="get">
+                            <div id="add-row_filter" class="dataTables_filter">
+                                <label>
+                                    Search: <input name="SearchString" value="@ViewData["CurrentFilter"]" type="search" class="form-control form-control-sm" placeholder="" aria-controls="add-row" />
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- #endregion -->
 
-                    </tbody>
-                </table>
+
+                    <div class="row mt-3">
+                        <div class="col-sm-12 col-md-12">
+                            <table id="add-row"
+                                   class="display table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Category Name</th>
+                                        <th>Description</th>
+                                        <th>Article Count</th>
+                                        <th>Status</th>
+                                        <th style="width: 10%; text-align: center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Category Name</th>
+                                        <th>Description</th>
+                                        <th>Article Count</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    @foreach (var cateogory in Model)
+                                    {
+                                        <tr>
+                                            <td>@cateogory.CategoryId</td>
+                                            <td>@cateogory.CategoryName</td>
+                                            <td>@cateogory.CategoryDescription</td>
+                                            <td>@cateogory.NewsArticleCount</td>
+                                            <td><span class="@(cateogory.CategoryStatus != CategoryStatus.Inactive ? "badge badge-success" : "badge badge-danger")">@cateogory.CategoryStatus</span></td>
+                                            <td>
+                                                <div class="form-button-action">
+                                                    <button type="button"
+                                                            data-categoryid="@cateogory.CategoryId"
+                                                            class="btn btn-link btn-primary btn-lg updateCategoryBtn"
+                                                            data-original-title="Edit Task">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button type="button"
+                                                            data-categoryid="@cateogory.CategoryId"
+                                                            class="btn btn-link btn-danger deleteCategoryBtn"
+                                                            data-original-title="Remove">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <!-- #region Pagination -->
+                    <div class="d-flex justify-content-between">
+                        <div></div>
+                        <ul class="pagination">
+                            <li class="paginate_button page-item previous @(!Model.HasPreviousPage ? "disabled" : "")">
+                                <a asp-action="List"
+                                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                                   tabindex="0" class="page-link">Previous</a>
+                            </li>
+
+                            @for (var i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="paginate_button page-item @(i == Model.PageIndex ? "active" : "")">
+                                    <a asp-action="List"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                       asp-route-pageNumber="@i"
+                                       tabindex="0" class="page-link">@i</a>
+                                </li>
+                            }
+
+                            <li class="paginate_button page-item previous @(!Model.HasNextPage ? "disabled" : "")">
+                                <a asp-action="List"
+                                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                                   tabindex="0" class="page-link">Next</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- #endregion -->
+
+                </div>
             </div>
         </div>
     </div>
@@ -187,6 +239,8 @@
                     $("#addCategoryModal").modal("show");
                 });
             });
+
+            $("")
         });
     </script>
 }

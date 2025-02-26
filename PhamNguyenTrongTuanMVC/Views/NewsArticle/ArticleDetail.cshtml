@@ -59,10 +59,7 @@
                                 <ul>
                                     <li><span>Categories:</span> @Model.Category?.CategoryName</li>
                                     <li>
-                                        <span>Tags: </span> @foreach (var tag in Model.NewsTags)
-                                        {
-                                            <i>@tag.Tag?.TagName - </i>
-                                        }
+                                        <span>Tags: </span> @string.Join(" - ", Model.NewsTags.Select(tag => tag.Tag?.TagName))
                                     </li>
                                 </ul>
                                 <div class="blog__details__social">

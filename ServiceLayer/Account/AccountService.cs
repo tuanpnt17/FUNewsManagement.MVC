@@ -45,9 +45,19 @@ public class AccountService : IAccountService
         return accountDto;
     }
 
-    public async Task<AccountDTO> CreateNewAccountAsync(AccountDTO accountDto)
+    public async Task<AccountDTO?> CreateNewAccountAsync(AccountDTO accountDto)
     {
         var systemAccount = _mapper.Map<SystemAccount>(accountDto);
+
+        var accounts = await _accountRepository.ListAllAsync();
+        var foundAccountEmail = accounts.FirstOrDefault(x =>
+            x.AccountEmail == accountDto.AccountEmail
+        );
+        if (foundAccountEmail != null)
+        {
+            return null;
+        }
+
         var addedAccount = await _accountRepository.CreateAsync(systemAccount);
         var accountDtoToReturn = _mapper.Map<AccountDTO>(addedAccount);
         return accountDtoToReturn;
@@ -72,5 +82,20 @@ public class AccountService : IAccountService
         var accounts = await _accountRepository.ListAllAsync();
         var accountDtos = _mapper.Map<IEnumerable<AccountDTO>>(accounts);
         return accountDtos;
+    }
+
+    public async Task<int?> UpdateProfile(AccountDTO account)
+    {
+        var repoAccount = await _accountRepository.GetAccountByIdAsync(account.AccountId);
+        if (repoAccount == null)
+            return null;
+
+        if (account.AccountRole == default)
+        {
+            account.AccountRole = repoAccount.AccountRole;
+        }
+        var updateAccount = _mapper.Map<SystemAccount>(account);
+        var effected = await _accountRepository.UpdateAsync(updateAccount);
+        return effected;
     }
 }

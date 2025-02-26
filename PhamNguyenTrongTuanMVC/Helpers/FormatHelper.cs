@@ -1,6 +1,6 @@
 ﻿namespace PhamNguyenTrongTuanMVC.Helpers
 {
-    public static class FormatStringHelper
+    public static class FormatHelper
     {
         public static string TruncateString(string? input, int wordCount)
         {
@@ -14,6 +14,11 @@
                 return input;
             }
             return string.Join(" ", words.Take(wordCount)) + "...";
+        }
+
+        public static string FormatActualTime(DateTime dateTime, string format = "dd/MM/yyyy HH:mm")
+        {
+            return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc).ToLocalTime().ToString(format);
         }
     }
 }
