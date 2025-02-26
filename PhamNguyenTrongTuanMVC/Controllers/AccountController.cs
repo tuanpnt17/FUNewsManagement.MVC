@@ -30,36 +30,67 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> List(string sortOrder)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> List(
+        string? searchString,
+        string currentFilter,
+        int? pageNumber
+    )
     {
-        ViewData["IdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "id_asc" : "id_desc";
-        ViewData["NameSortParam"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "name_asc";
-        ViewData["EmailSortParam"] = string.IsNullOrEmpty(sortOrder) ? "email_desc" : "email_asc";
+        if (searchString != null)
+        {
+            pageNumber = 1;
+        }
+        else
+        {
+            searchString = currentFilter;
+        }
+
+        ViewData["CurrentFilter"] = searchString;
         var accountDtos = await _accountService.ListAllAccounts();
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            accountDtos = accountDtos.Where(a =>
+                a.AccountName.Contains(searchString) || a.AccountEmail.Contains(searchString)
+            );
+        }
+
         var listAccountViewModel = _mapper.Map<IEnumerable<ViewAccountViewModel>>(accountDtos);
-        return View(listAccountViewModel);
+
+        var pageSize = 3;
+        var paginatedList = PaginatedList<ViewAccountViewModel>.Create(
+            listAccountViewModel.AsQueryable(),
+            pageNumber ?? 1,
+            pageSize
+        );
+        return View(paginatedList);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Add(
         [FromForm]
         [Bind("AccountName,AccountEmail,AccountRole")]
             AddNewAccountViewModel addAccountViewModel
     )
     {
-        // Todo: Check if email is already existed
-
         if (!ModelState.IsValid)
         {
             return PartialView("_AddAccountModal", addAccountViewModel);
         }
         var accountDto = _mapper.Map<AccountDTO>(addAccountViewModel);
-        await _accountService.CreateNewAccountAsync(accountDto);
+        var result = await _accountService.CreateNewAccountAsync(accountDto);
+        if (result == null)
+        {
+            ModelState.AddModelError("AccountEmail", "Email is already exited");
+            return PartialView("_AddAccountModal", addAccountViewModel);
+        }
         return RedirectToAction("List");
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public IActionResult Add()
     {
         var addAccountViewModel = new AddNewAccountViewModel()
@@ -71,6 +102,7 @@ public class AccountController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var accountDto = await _accountService.GetAcountByIdAsync(id);
@@ -81,6 +113,7 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(UpdateAccountViewModel updateAccountViewModel)
     {
         if (!ModelState.IsValid)
@@ -96,6 +129,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var deleteEffected = await _accountService.DeleteAccountAsync(id);
@@ -183,7 +217,7 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public async Task<IActionResult> Profile()
     {
         return View();

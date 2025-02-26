@@ -26,6 +26,7 @@ namespace PhamNguyenTrongTuanMVC.Extentions
                 typeof(AppDomain)
             );
             services.Configure<AdminOptions>(config.GetSection(AdminOptions.Admin));
+            services.Configure<PaginationOptions>(config.GetSection(PaginationOptions.Pagination));
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<INewsArticleService, NewsArticleService>();

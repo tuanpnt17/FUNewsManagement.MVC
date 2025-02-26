@@ -48,13 +48,40 @@ namespace PhamNguyenTrongTuanMVC.Controllers
             return View(article);
         }
 
-        //TODO: Pagination & Searching & filtering
-
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(
+            string? searchString,
+            string currentFilter,
+            int? pageNumber
+        )
         {
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
             var articles = await _newsArticleService.GetAllNewsArticleAsync();
+
             var viewModels = _mapper.Map<IEnumerable<ViewNewsArticleViewModel>>(articles);
-            return View(viewModels);
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                viewModels = viewModels.Where(a =>
+                    a.NewsTitle.Contains(searchString)
+                    || a.UpdatedByName.Contains(searchString)
+                    || a.CreatedByName.Contains(searchString)
+                );
+            }
+            var pageSize = 3;
+            var paginatedList = PaginatedList<ViewNewsArticleViewModel>.Create(
+                viewModels.AsQueryable(),
+                pageNumber ?? 1,
+                pageSize
+            );
+            return View(paginatedList);
         }
 
         [HttpPost]

@@ -4,7 +4,7 @@
 }
 @using PhamNguyenTrongTuanMVC.Helpers
 @using RepositoryLayer.Enums
-@model IEnumerable<PhamNguyenTrongTuanMVC.Models.NewsArticle.ViewNewsArticleViewModel>
+@model ServiceLayer.Models.PaginatedList<PhamNguyenTrongTuanMVC.Models.NewsArticle.ViewNewsArticleViewModel>
 
 
 
@@ -14,10 +14,6 @@
             <div class="d-flex align-items-center justify-content-between">
                 <h4 class="card-title">News Article Management</h4>
                 <div class="d-flex gap-3">
-                    <button class="btn btn-secondary btn-round ms-auto" type="button" id="openManageTagModal">
-                        <i class="fas fa-tag"></i> Manage Tags
-                    </button>
-
                     <button class="btn btn-primary btn-round ms-auto" type="button" id="openCreateModal">
                         <i class="fa fa-plus"></i> Create
                     </button>
@@ -27,63 +23,114 @@
         <div class="card-body">
             <div id="modalContainer"></div>
             <div class="table-responsive">
-                <table id="add-row"
-                       class="display table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>@Html.DisplayNameFor(n => n.NewsArticleId)</th>
-                            <th>@Html.DisplayNameFor(n => n.NewsTitle)</th>
-                            <th>@Html.DisplayNameFor(n => n.Headline)</th>
-                            <th>@Html.DisplayNameFor(n => n.CategoryName)</th>
-                            <th>@Html.DisplayNameFor(n => n.CreatedByName)</th>
-                            <th>@Html.DisplayNameFor(n => n.ModifiedDate)</th>
-                            <th style="text-align: center">@Html.DisplayNameFor(n => n.NewsStatus)</th>
-                            <th style="width: 5%; text-align: center">Action</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>@Html.DisplayNameFor(n => n.NewsArticleId)</th>
-                            <th>@Html.DisplayNameFor(n => n.NewsTitle)</th>
-                            <th>@Html.DisplayNameFor(n => n.Headline)</th>
-                            <th>@Html.DisplayNameFor(n => n.CategoryName)</th>
-                            <th>@Html.DisplayNameFor(n => n.CreatedByName)</th>
-                            <th>@Html.DisplayNameFor(n => n.ModifiedDate)</th>
-                            <th>@Html.DisplayNameFor(n => n.NewsStatus)</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        @foreach (var newsArticle in Model)
-                        {
-                            <tr>
-                                <td>@newsArticle.NewsArticleId</td>
-                                <td>@FormatHelper.TruncateString(newsArticle.NewsTitle, 4)</td>
-                                <td>@FormatHelper.TruncateString(newsArticle.Headline, 5)</td>
-                                <td>@newsArticle.CategoryName</td>
-                                <td>@newsArticle.CreatedByName</td>
-                                <td>@FormatHelper.FormatActualTime(@newsArticle.ModifiedDate)</td>
-                                <td><span class="@(newsArticle.NewsStatus != NewsStatus.Inactive? "badge badge-success" : "badge badge-danger")">@newsArticle.NewsStatus</span></td>
-                                <td>
-                                    <div class="form-button-action">
-                                        <button type="button"
-                                                data-articleid="@newsArticle.NewsArticleId"
-                                                class="btn btn-link btn-primary btn-lg updateNewsArticleBtn"
-                                                data-original-title="Edit Task">
-                                            <i class="fa fa-edit"></i>
-                                        </button>
-                                        <button type="button"
-                                                data-articleid="@newsArticle.NewsArticleId"
-                                                class="btn btn-link btn-danger deleteNewsArticleBtn"
-                                                data-original-title="Remove">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
+                <div id="add-row_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+                    <div class="row">
+                        <form class="col-sm-12 col-md-12" asp-action="List" method="get">
+                            <div id="add-row_filter" class="dataTables_filter">
+                                <label>
+                                    Search: <input name="SearchString" value="@ViewData["CurrentFilter"]" type="search" class="form-control form-control-sm" placeholder="" aria-controls="add-row" />
+                                </label>
+                            </div>
+                        </form>
+                    </div>
 
-                    </tbody>
-                </table>
+                    <div class="row mt-3">
+                        <div class="col-sm-12 col-md-12">
+                            <table id="add-row"
+                                   class="display table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Title</th>
+                                        <th>Headline</th>
+                                        <th>Category</th>
+                                        <th>Author</th>
+                                        <th>Date modified</th>
+                                        <th style="text-align: center">Status</th>
+                                        <th style="width: 5%; text-align: center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Title</th>
+                                        <th>Headline</th>
+                                        <th>Category</th>
+                                        <th>Author</th>
+                                        <th>Date modified</th>
+                                        <th style="text-align: center">Status</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    @foreach (var newsArticle in Model)
+                                    {
+                                        <tr>
+                                            <td>@newsArticle.NewsArticleId</td>
+                                            <td>@FormatHelper.TruncateString(newsArticle.NewsTitle, 4)</td>
+                                            <td>@FormatHelper.TruncateString(newsArticle.Headline, 5)</td>
+                                            <td>@newsArticle.CategoryName</td>
+                                            <td>@newsArticle.CreatedByName</td>
+                                            <td>@FormatHelper.FormatActualTime(@newsArticle.ModifiedDate)</td>
+                                            <td><span class="@(newsArticle.NewsStatus != NewsStatus.Inactive? "badge badge-success" : "badge badge-danger")">@newsArticle.NewsStatus</span></td>
+                                            <td>
+                                                <div class="form-button-action">
+                                                    <button type="button"
+                                                            data-articleid="@newsArticle.NewsArticleId"
+                                                            class="btn btn-link btn-primary btn-lg updateNewsArticleBtn"
+                                                            data-original-title="Edit Task">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button type="button"
+                                                            data-articleid="@newsArticle.NewsArticleId"
+                                                            class="btn btn-link btn-danger deleteNewsArticleBtn"
+                                                            data-original-title="Remove">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- #region Pagination -->
+                    <div class="d-flex justify-content-between">
+                        <div></div>
+                        <ul class="pagination">
+                            <li class="paginate_button page-item previous @(!Model.HasPreviousPage ? "disabled" : "")">
+                                <a asp-action="List"
+                                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                                   tabindex="0" class="page-link">Previous</a>
+                            </li>
+
+                            @for (var i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="paginate_button page-item @(i == Model.PageIndex ? "active" : "")">
+                                    <a asp-action="List"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                       asp-route-pageNumber="@i"
+                                       tabindex="0" class="page-link">@i</a>
+                                </li>
+                            }
+
+                            <li class="paginate_button page-item previous @(!Model.HasNextPage ? "disabled" : "")">
+                                <a asp-action="List"
+                                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                                   tabindex="0" class="page-link">Next</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- #endregion -->
+
+                </div>
+
+
+
             </div>
         </div>
     </div>

@@ -10,7 +10,7 @@ public interface IAccountService
 
     Task<AccountDTO?> GetAcountByIdAsync(int accountId);
 
-    Task<AccountDTO> CreateNewAccountAsync(AccountDTO accountDto);
+    Task<AccountDTO?> CreateNewAccountAsync(AccountDTO accountDto);
     Task<int?> UpdateAccountAsync(AccountDTO accountDto);
     Task<int?> DeleteAccountAsync(int accountId);
 

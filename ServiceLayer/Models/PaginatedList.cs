@@ -1,6 +1,6 @@
 ﻿namespace ServiceLayer.Models
 {
-    public class PaginatedList<T> : List<T>
+    public class PaginatedList<T> : List<T>, IEnumerable<T>
     {
         public PaginatedList() { }
 
@@ -9,9 +9,11 @@
             PageIndex = pageIndex;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             this.AddRange(items);
+            TotalElements = this.Count();
         }
 
         public int TotalPages { get; private set; }
+        public int TotalElements { get; set; }
 
         public int PageIndex { get; private set; }
         public bool HasPreviousPage => (PageIndex > 1);

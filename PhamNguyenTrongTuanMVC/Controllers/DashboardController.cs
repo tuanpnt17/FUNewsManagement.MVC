@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PhamNguyenTrongTuanMVC.Helpers;
 using PhamNguyenTrongTuanMVC.Models.NewsArticle;
 using ServiceLayer.Models;
 using ServiceLayer.NewsArticle;
@@ -11,20 +12,32 @@ namespace PhamNguyenTrongTuanMVC.Controllers
     {
         private readonly INewsArticleService _newsArticleService;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
+        private readonly PaginationOptions _paginationOptions;
 
-        public DashboardController(INewsArticleService newsArticleService, IMapper mapper)
+        public DashboardController(
+            INewsArticleService newsArticleService,
+            IMapper mapper,
+            IConfiguration configuration
+        )
         {
             _newsArticleService = newsArticleService;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         [Authorize(Roles = "Admin")]
+        [HttpGet]
         public async Task<IActionResult> Report(
             DateTime? startDate,
             DateTime? endDate,
-            int? pageNumber
+            int? pageNumber,
+            int? pageSize
         )
         {
+            var paginationOptions = new PaginationOptions();
+            _configuration.GetSection(PaginationOptions.Pagination).Bind(paginationOptions);
+
             startDate ??= DateTime.UtcNow.AddDays(-30);
             endDate ??= DateTime.UtcNow;
             ViewData["StartDate"] = startDate;
@@ -47,11 +60,10 @@ namespace PhamNguyenTrongTuanMVC.Controllers
                 newsArticles
             );
 
-            var pageSize = 3;
             var paginatedList = PaginatedList<ViewNewsArticleViewModel>.Create(
                 viewReportNewsArticleViewModel.AsQueryable(),
                 pageNumber ?? 1,
-                pageSize
+                pageSize ?? paginationOptions.PageSize
             );
 
             return View(paginatedList);
