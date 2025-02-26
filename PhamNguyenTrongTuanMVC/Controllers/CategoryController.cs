@@ -34,13 +34,15 @@ namespace PhamNguyenTrongTuanMVC.Controllers
             {
                 searchString = currentFilter;
             }
+
             ViewData["CurrentFilter"] = searchString;
             var categoriesDto = await _categoryService.GetCategoriesAsync();
             if (!string.IsNullOrEmpty(searchString))
             {
+                searchString = searchString.Trim().ToLower();
                 categoriesDto = categoriesDto.Where(a =>
-                    a.CategoryName.Contains(searchString)
-                    || a.CategoryDescription.Contains(searchString)
+                    a.CategoryName.ToLower().Contains(searchString)
+                    || a.CategoryDescription.ToLower().Contains(searchString)
                 );
             }
             var categoriesViewModel = _mapper.Map<IEnumerable<CategoryViewModel>>(categoriesDto);

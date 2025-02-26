@@ -50,8 +50,10 @@ public class AccountController : Controller
         var accountDtos = await _accountService.ListAllAccounts();
         if (!string.IsNullOrEmpty(searchString))
         {
+            searchString = searchString.Trim().ToLower();
             accountDtos = accountDtos.Where(a =>
-                a.AccountName.Contains(searchString) || a.AccountEmail.Contains(searchString)
+                a.AccountName.ToLower().Contains(searchString)
+                || a.AccountEmail.ToLower().Contains(searchString)
             );
         }
 
